@@ -9,7 +9,7 @@ export interface IBillDoc extends IBill {
 const Bills = "bills"
 const billCollectionRef = collection(db, Bills)
 
-class BillController {
+export class BillController {
 
     get = async () => {
         const { docs } = await getDocs(billCollectionRef)
@@ -27,5 +27,3 @@ class BillController {
         return await updateDoc(tutorialDoc, Bills, bill)
     }
 }
-
-export default new BillController()

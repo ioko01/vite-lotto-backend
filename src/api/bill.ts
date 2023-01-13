@@ -1,6 +1,8 @@
-import Bills from "../helpers/Bill";
+import { BillController } from "../helpers/Bill";
 import { Request, Response } from 'express'
 import { APP } from "../main";
+
+const Bills = new BillController()
 
 export class ApiBill {
     get = (url: string) => {

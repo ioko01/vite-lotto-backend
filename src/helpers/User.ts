@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import { IUser } from "../models/User";
 import { TUserRoleEnum } from "../models/User";
 import { db } from "../utils/firebase";
-import { collection, getDoc, getDocs, addDoc, updateDoc, deleteDoc, doc } from "firebase/firestore";
+import { collection, getDoc, getDocs, addDoc, updateDoc, deleteDoc, doc, where } from "firebase/firestore";
 
 export interface IUserDoc extends IUser {
     id: string;
@@ -11,21 +11,27 @@ export interface IUserDoc extends IUser {
 const Users = "users"
 const userCollectionRef = collection(db, Users)
 
-class UserController {
+export class UserController {
     get = async () => {
         const { docs } = await getDocs(userCollectionRef)
         return docs.map((doc) => {
-            return { ...doc.data(), id: doc.id } as IUserDoc
+            if (TUserRoleEnum.ADMIN === doc.data().role) {
+                throw new Error("403")
+            } else {
+                return { status: 200 }
+            }
         })
     }
 
     add = async (user: IUser) => {
         const { docs } = await getDocs(userCollectionRef)
-
-        docs.map((doc) => {
-            console.log(doc.data()['role'])
+        return docs.map((doc) => {
+            if (TUserRoleEnum.ADMIN === doc.data().role) {
+                throw new Error("403")
+            } else {
+                return { ...doc.data(), id: doc.id } as IUserDoc
+            }
         })
-        // return await addDoc(userCollectionRef, user)
     }
 
     update = async (id: string, user: IUser) => {
@@ -34,7 +40,6 @@ class UserController {
     }
 }
 
-export default new UserController()
 
 // export const createSuperAdmin = async (): Promise<Messages | null> => {
 

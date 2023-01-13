@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import cors, { CorsOptions } from "cors";
 import dotenv from 'dotenv'
 import { ApiBill } from './api/bill';
+import { ApiUser } from './api/user';
 
 dotenv.config()
 
@@ -19,6 +20,8 @@ APP.use(bodyParser.json())
 new ApiBill().get('/getbill')
 new ApiBill().add('/addbill')
 new ApiBill().update('/updatebill')
+
+new ApiUser().get('/getuser')
 
 APP.listen(PORT, () => {
     console.log(`⚡️[server]: Server is running at http://localhost:${PORT}`)
