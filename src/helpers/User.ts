@@ -15,11 +15,7 @@ export class UserController {
     get = async () => {
         const { docs } = await getDocs(userCollectionRef)
         return docs.map((doc) => {
-            if (TUserRoleEnum.ADMIN === doc.data().role) {
-                throw new Error("403")
-            } else {
-                return { status: 200 }
-            }
+            return { ...doc.data(), id: doc.id } as IUserDoc
         })
     }
 
