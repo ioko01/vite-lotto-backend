@@ -22,6 +22,7 @@ new ApiBill().add('/addbill')
 new ApiBill().update('/updatebill')
 
 new ApiUser().get('/getuser')
+new ApiUser().add('/adduser')
 
 APP.listen(PORT, () => {
     console.log(`⚡️[server]: Server is running at http://localhost:${PORT}`)
