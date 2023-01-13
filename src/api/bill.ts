@@ -4,7 +4,7 @@ import { APP } from "../main";
 
 export class ApiBill {
     get = (url: string) => {
-        APP.get(url, async (res: Response) => {
+        APP.get(url, async (_: Request, res: Response) => {
             const snapshot = await Bills.get()
             snapshot ? res.status(200).send(snapshot) : res.status(res.statusCode).send({ statusCode: res.statusCode, statusMessage: res.statusMessage })
         })

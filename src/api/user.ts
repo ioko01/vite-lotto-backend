@@ -3,7 +3,7 @@ import { APP } from "../main";
 
 export class ApiUser {
     get = (url: string) => {
-        APP.get(url, async (res: Response) => {
+        APP.get(url, async (_: Request, res: Response) => {
 
         })
     }
