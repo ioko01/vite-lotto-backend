@@ -3,6 +3,11 @@ import { IUser } from "../models/User";
 import { TUserRoleEnum } from "../models/User";
 import { db } from "../utils/firebase";
 import { collection, getDoc, getDocs, addDoc, updateDoc, deleteDoc, doc, where, query, DocumentData } from "firebase/firestore";
+import { omit, get } from 'lodash';
+import { excludedFields } from "../api/user";
+import { signJwt } from "../utils/jwt";
+import config from "config";
+import redisClient from '../utils/redis';
 
 export interface IUserDoc extends IUser {
     id: string;
@@ -20,8 +25,22 @@ export class UserController {
     }
 
     add = async (user: IUser) => {
-        return await addDoc(userCollectionRef, user)
+        const addUser = await addDoc(userCollectionRef, user)
+        return omit(addUser, excludedFields)
     }
+
+    signToken = async (user: IUserDoc) => {
+        const access_token = signJwt(
+            { sub: user.id },
+            { expiresIn: `${config.get<number>('accessTokenExpiresIn')}m`, }
+        );
+
+        redisClient.set(user.id, JSON.stringify(user), {
+            EX: 60 * 60,
+        });
+
+        return { access_token };
+    };
 
     addAdmin = async (user: IUser) => {
         const q = query(userCollectionRef, where("role", "==", "ADMIN"))

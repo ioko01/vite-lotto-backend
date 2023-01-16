@@ -102,3 +102,14 @@ content-type: application/json
     "status": "NORMAL",
     "cradit": 0
 }
+
+POST http://localhost:8000/addstore
+content-type: application/json
+
+{
+    "name": "ร้านมั่งมี",
+    "img_logo": "logo.jpg",
+    "created_at":"2023-01-13",
+    "updated_at":"2023-01-13",
+    "user_create_id": "1"
+}
