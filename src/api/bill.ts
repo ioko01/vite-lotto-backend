@@ -1,19 +1,19 @@
 import { BillController } from "../helpers/Bill";
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { APP } from "../main";
 
 const Bills = new BillController()
 
 export class ApiBill {
-    get = (url: string) => {
-        APP.get(url, async (_: Request, res: Response) => {
+    get = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => Promise<void>) => {
+        APP.get(url, middleware, async (_: Request, res: Response) => {
             const snapshot = await Bills.get()
             snapshot ? res.status(200).send(snapshot) : res.status(res.statusCode).send({ statusCode: res.statusCode, statusMessage: res.statusMessage })
         })
     }
 
-    add = (url: string) => {
-        APP.post(url, async (req: Request, res: Response) => {
+    add = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => Promise<void>) => {
+        APP.post(url, middleware, async (req: Request, res: Response) => {
             try {
                 const data = req.body
                 await Bills.add(data)
@@ -29,8 +29,8 @@ export class ApiBill {
         })
     }
 
-    update = (url: string) => {
-        APP.put(url, async (req: Request, res: Response) => {
+    update = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => Promise<void>) => {
+        APP.put(url, middleware, async (req: Request, res: Response) => {
             try {
                 const data = req.body
                 await Bills.update("1", data)
@@ -47,7 +47,7 @@ export class ApiBill {
         })
     }
 
-    delete = (url: string) => {
+    delete = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => Promise<void>) => {
 
     }
 }

@@ -1,30 +1,38 @@
-// import { IUser, TUserRoleEnum } from "../models/User";
+import { IUser, TUserRoleEnum, TUserRole, TUserStatusEnum } from "../models/User";
+import bcrypt from "bcrypt";
+import { db } from "../utils/firebase";
+import { collection, getDocs, where, query } from "firebase/firestore";
 
-// /**
-//  * @description ตรวจสอบไอดีที่ล็อกอินเข้ามาว่ามี Token แนบมาด้วยหรือไม่
-//  * @returns User Model
-//  */
-// export const isAuthenticated = async (UID?: string, tokenVersion?: number) => {
-//     const isUser = await UsersModel.findById(UID);
-//     if (!isUser) throw new Error("please login");
+const Users = "users"
+const userCollectionRef = collection(db, Users)
 
-//     if (isUser.status !== TUserRoleEnum.MEMBER)
-//         throw new Error("not authorization");
+export const isAuthenticated = async (UID?: string, tokenVersion?: number) => {
+    const q = query(userCollectionRef, where("id", "==", UID))
+    const { docs } = await getDocs(q)
 
-//     if (tokenVersion !== isUser.tokenVersion)
-//         throw new Error("not authentication");
+    if (docs.length === 0) throw new Error("please login");
 
-//     return isUser;
-// };
+    docs.map((doc) => {
+        if (doc.data().status !== TUserRoleEnum.MEMBER)
+            throw new Error("not authorization");
 
-// export const isAuthorization = async (
-//     UsersModel: IUser,
-//     authorization: UserRoles[]
-// ) => {
-//     const isAuthorize = authorization.find((res) => UsersModel.role === res);
+        if (tokenVersion !== doc.data().tokenVersion)
+            throw new Error("not authentication");
 
-//     if (!isAuthorize || UsersModel.status !== UserStatusEnum.REGULAR)
-//         throw new Error("not authorization");
+        return doc.data()
+    })
 
-//     return true;
-// };
+};
+
+export const isAuthorization = async (
+    UsersModel: IUser,
+    authorization: TUserRole
+) => {
+
+    const isAuthorize = authorization === UsersModel.role
+
+    if (!isAuthorize || UsersModel.status !== TUserStatusEnum.REGULAR)
+        throw new Error("not authorization");
+
+    return true;
+};

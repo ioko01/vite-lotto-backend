@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import { IUser } from "../models/User";
 import { TUserRoleEnum } from "../models/User";
 import { db } from "../utils/firebase";
-import { collection, getDoc, getDocs, addDoc, updateDoc, deleteDoc, doc, where } from "firebase/firestore";
+import { collection, getDoc, getDocs, addDoc, updateDoc, deleteDoc, doc, where, query, DocumentData } from "firebase/firestore";
 
 export interface IUserDoc extends IUser {
     id: string;
@@ -20,14 +20,27 @@ export class UserController {
     }
 
     add = async (user: IUser) => {
-        const { docs } = await getDocs(userCollectionRef)
-        return docs.map((doc) => {
-            if (TUserRoleEnum.ADMIN === doc.data().role) {
-                throw new Error("403")
-            } else {
-                return { ...doc.data(), id: doc.id } as IUserDoc
+        return await addDoc(userCollectionRef, user)
+    }
+
+    addAdmin = async (user: IUser) => {
+        const q = query(userCollectionRef, where("role", "==", "ADMIN"))
+        const { docs } = await getDocs(q)
+        if (docs.length > 0) {
+            throw new Error("403")
+        } else {
+            const hashedPassword = await bcrypt.hash(user.password, 10);
+            const userDoc: IUser = {
+                store: user.store,
+                fullname: user.fullname,
+                username: user.username,
+                password: hashedPassword,
+                role: "ADMIN",
+                status: "REGULAR",
+                credit: 0
             }
-        })
+            return await addDoc(userCollectionRef, userDoc)
+        }
     }
 
     update = async (id: string, user: IUser) => {

@@ -81,3 +81,24 @@ content-type: application/json
         "updated_at": "2023-01-13",
         "user_create_id": "1"
 }
+
+
+###
+POST http://localhost:8000/addadmin
+content-type: application/json
+
+{
+    "store": {
+        "name": "มั่งมี",
+        "img_logo": "logo.jpg",
+        "created_at":"2023-01-13",
+        "updated_at":"2023-01-13",
+        "user_create_id": "1"
+    },
+    "username": "test",
+    "password": "1234",
+    "fullname": "firstname lastname",
+    "role": "ADMIN",
+    "status": "NORMAL",
+    "cradit": 0
+}

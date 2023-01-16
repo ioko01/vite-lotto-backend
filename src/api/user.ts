@@ -14,8 +14,31 @@ export class ApiUser {
     add = (url: string) => {
         APP.post(url, async (req: Request, res: Response) => {
             try {
+                const data = req.body
+                await Users.add(data)
+                    .then(() => {
+                        res.send({ statusCode: res.statusCode, message: "OK" })
+                    })
+                    .catch(error => {
+                        res.send({ statusCode: res.statusCode, message: error })
+                    })
+            } catch (error) {
+                res.status(res.statusCode).send(error);
+            }
+        })
+    }
 
-
+    addAdmin = (url: string) => {
+        APP.post(url, async (req: Request, res: Response) => {
+            try {
+                const data = req.body
+                await Users.addAdmin(data)
+                    .then(() => {
+                        res.send({ statusCode: res.statusCode, message: "OK" })
+                    })
+                    .catch(error => {
+                        res.send({ statusCode: res.statusCode, message: error })
+                    })
             } catch (error) {
                 res.status(res.statusCode).send(error);
             }
