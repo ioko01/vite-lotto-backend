@@ -1,5 +1,5 @@
 import { FirebaseOptions, initializeApp } from "firebase/app"
-import { getFirestore } from "firebase/firestore"
+import { collection, getFirestore } from "firebase/firestore"
 import dotenv from 'dotenv'
 
 dotenv.config()
@@ -17,4 +17,10 @@ const FIREBASE_CONFIG: FirebaseOptions = {
 
 const app = initializeApp(FIREBASE_CONFIG)
 export const db = getFirestore(app)
+
+export const Users = "users"
+export const usersCollectionRef = collection(db, Users)
+
+export const Bills = "bills"
+export const billsCollectionRef = collection(db, Bills)
 

@@ -1,35 +1,33 @@
 import { IUser, TUserRoleEnum, TUserRole, TUserStatusEnum } from "../models/User";
 import bcrypt from "bcrypt";
-import { db } from "../utils/firebase";
-import { collection, getDocs, where, query } from "firebase/firestore";
-
-const Users = "users"
-const userCollectionRef = collection(db, Users)
+import { usersCollectionRef } from "../utils/firebase";
+import { getDocs, where, query } from "firebase/firestore";
 
 export const isAuthenticated = async (UID?: string, tokenVersion?: number) => {
-    const q = query(userCollectionRef, where("id", "==", UID))
+    const q = query(usersCollectionRef, where("id", "==", UID))
     const { docs } = await getDocs(q)
 
     if (docs.length === 0) throw new Error("please login");
 
-    docs.map((doc) => {
+    const user = docs.map((doc) => {
         if (doc.data().status !== TUserRoleEnum.MEMBER)
             throw new Error("not authorization");
 
         if (tokenVersion !== doc.data().tokenVersion)
             throw new Error("not authentication");
 
-        return doc.data()
+        return doc.data() as IUser
     })
-
+    const isUser = user[0]
+    return isUser
 };
 
 export const isAuthorization = async (
     UsersModel: IUser,
-    authorization: TUserRole
+    authorization: TUserRole | TUserRole[]
 ) => {
 
-    const isAuthorize = authorization === UsersModel.role
+    const isAuthorize = authorization.includes(UsersModel.role)
 
     if (!isAuthorize || UsersModel.status !== TUserStatusEnum.REGULAR)
         throw new Error("not authorization");

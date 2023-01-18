@@ -1,65 +1,79 @@
 import bcrypt from "bcrypt";
-import { IUser } from "../models/User";
+import { IUser, TUserStatusEnum } from "../models/User";
 import { TUserRoleEnum } from "../models/User";
-import { db } from "../utils/firebase";
+import { Users, db, usersCollectionRef } from "../utils/firebase";
 import { collection, getDoc, getDocs, addDoc, updateDoc, deleteDoc, doc, where, query, DocumentData } from "firebase/firestore";
-import { omit, get } from 'lodash';
+import { omit } from 'lodash';
 import { excludedFields } from "../api/user";
 import { signJwt } from "../utils/jwt";
-import config from "config";
-import redisClient from '../utils/redis';
+// import redisClient from '../utils/redis';
+import { accessTokenExpiresIn } from "../config/default";
+import { validatePassword, validateUsername } from "../utils/validate";
+import { isAuthenticated } from "./Auth";
+import { GMT } from "../utils/time";
 
 export interface IUserDoc extends IUser {
     id: string;
 }
 
-const Users = "users"
-const userCollectionRef = collection(db, Users)
-
 export class UserController {
     get = async () => {
-        const { docs } = await getDocs(userCollectionRef)
+        const { docs } = await getDocs(usersCollectionRef)
         return docs.map((doc) => {
             return { ...doc.data(), id: doc.id } as IUserDoc
         })
     }
 
-    add = async (user: IUser) => {
-        const addUser = await addDoc(userCollectionRef, user)
-        return omit(addUser, excludedFields)
+    create = async (user: IUser) => {
+        return await addDoc(usersCollectionRef, user)
+    }
+
+    createAdmin = async (user: IUser) => {
+        const q = query(usersCollectionRef, where("role", "==", TUserRoleEnum.ADMIN))
+        const { docs } = await getDocs(q)
+
+        if (docs.length === 0) {
+            const { credit, fullname, password, role, status, username } = user
+
+            const hashedPassword = await bcrypt.hash(
+                password,
+                10
+            );
+
+            const userObj: IUser = {
+                username,
+                password: hashedPassword,
+                fullname,
+                role,
+                status,
+                credit,
+                created_at: GMT(),
+                updated_at: GMT()
+            }
+            await addDoc(usersCollectionRef, userObj)
+                .then(() => {
+                    return true;
+                })
+                .catch(() => {
+                    return false
+                })
+
+        } else {
+            return false;
+        }
     }
 
     signToken = async (user: IUserDoc) => {
         const access_token = signJwt(
             { sub: user.id },
-            { expiresIn: `${config.get<number>('accessTokenExpiresIn')}m`, }
+            { expiresIn: `${accessTokenExpiresIn}m`, }
         );
-
-        redisClient.set(user.id, JSON.stringify(user), {
-            EX: 60 * 60,
-        });
 
         return { access_token };
     };
 
     addAdmin = async (user: IUser) => {
-        const q = query(userCollectionRef, where("role", "==", "ADMIN"))
-        const { docs } = await getDocs(q)
-        if (docs.length > 0) {
-            throw new Error("403")
-        } else {
-            const hashedPassword = await bcrypt.hash(user.password, 10);
-            const userDoc: IUser = {
-                store: user.store,
-                fullname: user.fullname,
-                username: user.username,
-                password: hashedPassword,
-                role: "ADMIN",
-                status: "REGULAR",
-                credit: 0
-            }
-            return await addDoc(userCollectionRef, userDoc)
-        }
+
     }
 
     update = async (id: string, user: IUser) => {

@@ -84,25 +84,23 @@ content-type: application/json
 
 
 ###
-POST http://localhost:8000/addadmin
+POST http://localhost:8000/auth/admin
 content-type: application/json
 
 {
-    "store": {
-        "name": "มั่งมี",
-        "img_logo": "logo.jpg",
-        "created_at":"2023-01-13",
-        "updated_at":"2023-01-13",
-        "user_create_id": "1"
+    "store":{
+        "name": "ร้านมั่งมี",
+        "img_logo": "logo.jpg"
     },
-    "username": "test",
-    "password": "1234",
-    "fullname": "firstname lastname",
+    "username": "admin01",
+    "password": "123456789",
+    "fullname": "admin",
     "role": "ADMIN",
-    "status": "NORMAL",
-    "cradit": 0
+    "status": "REGULAR",
+    "credit": 0
 }
 
+###
 POST http://localhost:8000/addstore
 content-type: application/json
 
@@ -112,4 +110,36 @@ content-type: application/json
     "created_at":"2023-01-13",
     "updated_at":"2023-01-13",
     "user_create_id": "1"
+}
+
+###
+POST http://localhost:8000/auth/register
+content-type: application/json
+
+{
+    "store":{
+        "name": "ร้านมั่งมี",
+        "img_logo": "logo.jpg",
+        "created_at":"2023-01-13",
+        "updated_at":"2023-01-13",
+        "user_create_id": "1"
+    },
+    "username": "test01",
+    "password": "123456789",
+    "fullname": "test",
+    "role": "ADMIN",
+    "status": "REGULAR",
+    "credit": 0,
+    "created_at":"2023-01-13",
+    "updated_at":"2023-01-13",
+    "user_create_id": "1"
+}
+
+###
+POST http://localhost:8000/auth/login
+Content-Type: application/json
+
+{
+    "username": "admin01",
+    "password": "123456789"
 }

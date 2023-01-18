@@ -3,16 +3,25 @@ import { CookieOptions, NextFunction, Request, Response } from 'express';
 import AppError from '../utils/appError';
 import { IUserDoc, UserController } from '../helpers/User';
 import { APP } from "../main";
-import { getDocs } from 'firebase/firestore';
+import { addDoc, getDocs, query, where } from 'firebase/firestore';
+import { accessTokenExpiresIn } from "../config/default";
+import { AppContext } from '../models/AppContext';
+import { validatePassword, validateUsername } from '../utils/validate';
+import { isAuthenticated, isAuthorization } from '../helpers/Auth';
+import { IUser, TUserRole, TUserRoleEnum } from '../models/User';
+import { usersCollectionRef } from '../utils/firebase';
+import bcrypt from "bcrypt";
+import { GMT } from '../utils/time';
+import { createToken, sendToken } from '../helpers/Token';
 
 const Users = new UserController()
 
 export const excludedFields = ['password']
 const accessTokenCookieOptions: CookieOptions = {
     expires: new Date(
-        Date.now() + config.get<number>('accessTokenExpiresIn') * 60 * 1000
+        Date.now() + accessTokenExpiresIn * 60 * 1000
     ),
-    maxAge: config.get<number>('accessTokenExpiresIn') * 60 * 1000,
+    maxAge: accessTokenExpiresIn * 60 * 1000,
     httpOnly: true,
     sameSite: 'lax',
 };
@@ -29,20 +38,45 @@ export class ApiUser {
     }
 
     register = (url: string) => {
-        APP.post(url, async (req: Request, res: Response, next: NextFunction) => {
+        APP.post(url, async (req: Request, res: Response) => {
             try {
-                const data = req.body
-                await Users.add(data)
+                const data = req.body as IUserDoc
+                const isValidateUsername = validateUsername(data.username);
+                if (!isValidateUsername) throw new Error("username invalid");
+
+                const isValidatePassword = validatePassword(data.password);
+                if (!isValidatePassword) throw new Error("password invalid");
+
+                const isUser = await isAuthenticated(data.id, data.tokenVersion);
+                await isAuthorization(isUser, [TUserRoleEnum.ADMIN]);
+
+                const q = query(usersCollectionRef, where("username", "==", data.username))
+                const { docs } = await getDocs(q)
+
+                if (docs.length > 0) throw new Error("this user is used");
+
+                const hashedPassword = await bcrypt.hash(data.password, 10);
+
+
+                const user: IUser = {
+                    username: data.username,
+                    password: hashedPassword,
+                    fullname: data.fullname,
+                    credit: data.credit,
+                    role: data.role,
+                    status: data.status,
+                    created_at: GMT(),
+                    updated_at: GMT(),
+                    user_create_id: "0"
+                }
+                await Users.create(user)
                     .then(() => {
                         res.send({ statusCode: res.statusCode, message: "OK" })
                     })
                     .catch(error => {
                         res.send({ statusCode: res.statusCode, message: error })
-                    });
+                    })
 
-                res.status(201).json({
-                    status: 'success',
-                });
             } catch (err: any) {
                 if (err.code === 11000) {
                     return res.status(409).json({
@@ -50,44 +84,50 @@ export class ApiUser {
                         message: 'username already exist',
                     });
                 }
-                next(err);
             }
         })
     }
 
     login = (url: string) => {
-        APP.post(url, async (req: Request, res: Response, next: NextFunction) => {
+        APP.post(url, async (req: Request, res: Response) => {
             try {
-                const { docs } = await getDocs(req.body.username)
+                const data = req.body as IUser
+                const q = query(usersCollectionRef, where("username", "==", data.username))
+                const { docs } = await getDocs(q)
 
-                if (!docs) return next(new AppError('Invalid username or password', 401));
+                if (docs.length === 0) throw new Error("no account")
+                const user = docs[0].data() as IUserDoc
+                const isPasswordValid = await bcrypt.compare(
+                    data.password,
+                    user.password
+                );
 
-                docs.map(async (doc) => {
-                    const data = doc.data() as IUserDoc
-                    const { access_token } = await new UserController().signToken(data);
+                if (!isPasswordValid) throw new Error("no account");
 
-                    res.cookie('accessToken', access_token, accessTokenCookieOptions);
-                    res.cookie('logged_in', true, {
-                        ...accessTokenCookieOptions,
-                        httpOnly: false,
-                    });
+                await isAuthenticated(user.id, user.tokenVersion);
+                await isAuthorization(user, [
+                    TUserRoleEnum.ADMIN,
+                    TUserRoleEnum.AGENT,
+                    TUserRoleEnum.MANAGER,
+                    TUserRoleEnum.MEMBER,
+                ]);
 
-                    res.status(200).json({
-                        status: 'success',
-                        access_token,
-                    });
-                })
+                const token = createToken(user.id, user.tokenVersion!);
+
+                sendToken(res, token);
+
+                res.send(user)
             } catch (err: any) {
-                next(err);
+                res.send(err)
             }
         })
     }
 
-    addAdmin = (url: string) => {
+    createAdmin = (url: string) => {
         APP.post(url, async (req: Request, res: Response) => {
             try {
-                const data = req.body
-                await Users.addAdmin(data)
+                const data = req.body as IUser
+                await Users.createAdmin(data)
                     .then(() => {
                         res.send({ statusCode: res.statusCode, message: "OK" })
                     })

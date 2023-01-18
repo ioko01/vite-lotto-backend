@@ -1,3 +1,4 @@
+import { IInitialState } from "./Main"
 import { IStore } from "./Store"
 
 export type TUserRole = "ADMIN" | "AGENT" | "MANAGER" | "MEMBER"
@@ -16,7 +17,7 @@ export enum TUserStatusEnum {
     BANNED = "BANNED",
 }
 
-export interface IUser {
+export interface IUser extends IInitialState {
     store?: IStore
     username: string
     password: string

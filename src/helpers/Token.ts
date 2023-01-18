@@ -11,7 +11,7 @@ const { COOKIE_NAME } = process.env;
 export const createToken = (UID: string, tokenVersion: number) => {
     return sign({ UID, tokenVersion }, privateKey, {
         algorithm: "RS256",
-        expiresIn: "1d",
+        expiresIn: "2d",
     });
 };
 
