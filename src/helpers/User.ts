@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import { IUser } from "../models/User";
 import { TUserRoleEnum } from "../models/User";
-import { Users, db, usersCollectionRef } from "../utils/firebase";
+import { DBUsers, db, usersCollectionRef } from "../utils/firebase";
 import { getDocs, addDoc, updateDoc, doc, where, query } from "firebase/firestore";
 import { GMT } from "../utils/time";
 
@@ -61,7 +61,7 @@ export class UserController {
     }
 
     update = async (id: string, user: IUser) => {
-        const tutorialDoc = doc(db, Users, id)
-        return await updateDoc(tutorialDoc, Users, user)
+        const tutorialDoc = doc(db, DBUsers, id)
+        return await updateDoc(tutorialDoc, DBUsers, user)
     }
 }

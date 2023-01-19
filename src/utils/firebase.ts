@@ -18,9 +18,12 @@ const FIREBASE_CONFIG: FirebaseOptions = {
 const app = initializeApp(FIREBASE_CONFIG)
 export const db = getFirestore(app)
 
-export const Users = "users"
-export const usersCollectionRef = collection(db, Users)
+export const DBUsers = "users"
+export const usersCollectionRef = collection(db, DBUsers)
 
-export const Bills = "bills"
-export const billsCollectionRef = collection(db, Bills)
+export const DBBills = "bills"
+export const billsCollectionRef = collection(db, DBBills)
+
+export const DBStores = "stores"
+export const storesCollectionRef = collection(db, DBStores)
 

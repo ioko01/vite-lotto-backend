@@ -1,5 +1,5 @@
 import { IBill } from "../models/Bill";
-import { Bills, billsCollectionRef, db } from "../utils/firebase";
+import { DBBills, billsCollectionRef, db } from "../utils/firebase";
 import { getDocs, addDoc, updateDoc, doc } from "firebase/firestore";
 
 export interface IBillDoc extends IBill {
@@ -20,7 +20,7 @@ export class BillController {
     }
 
     update = async (id: string, bill: IBill) => {
-        const tutorialDoc = doc(db, Bills, id)
-        return await updateDoc(tutorialDoc, Bills, bill)
+        const tutorialDoc = doc(db, DBBills, id)
+        return await updateDoc(tutorialDoc, DBBills, bill)
     }
 }
