@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { UserController } from '../helpers/User';
 import { APP } from "../main";
 import { getDocs, query, where } from 'firebase/firestore';
@@ -16,8 +16,8 @@ const Users = new UserController()
 
 export class ApiUser {
 
-    get = (url: string) => {
-        APP.get(url, async (_: Request, res: Response) => {
+    get = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void) => {
+        APP.get(url, middleware, async (_: Request, res: Response) => {
             const snapshot = await Users.getAll()
             snapshot ? res.status(200).send(snapshot) : res.status(res.statusCode).send({ statusCode: res.statusCode, statusMessage: res.statusMessage })
         })

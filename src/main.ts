@@ -23,17 +23,18 @@ const server = async () => {
     const User = new ApiUser()
     const Store = new ApiStore()
 
-    Bill.get('/getbill', authenticate, ["ADMIN", "AGENT"])
-    Bill.add('/addbill', authenticate)
-    Bill.update('/updatebill', authenticate)
+    Bill.getBillMe('/getbillme', authenticate, ["ADMIN", "AGENT", "MANAGER", "MEMBER"])
+    Bill.getBillAll('/getbillall', authenticate, ["ADMIN", "AGENT", "MANAGER"])
+    Bill.addBill('/addbill', authenticate, ["ADMIN", "AGENT", "MANAGER", "MEMBER"])
+    Bill.updateBill('/updatebill', authenticate, ["ADMIN", "AGENT", "MANAGER"])
+    Bill.deleteBill('/deletebill', authenticate, ["ADMIN", "AGENT", "MANAGER", "MEMBER"])
 
     Store.get('/getstore', authenticate)
     Store.add('/addstore', authenticate)
 
-    User.get('/getuser')
+    User.get('/getuser', authenticate)
     User.register('/auth/register')
     User.login('/auth/login')
-    User.createAdmin('/auth/admin')
 
     APP.listen(PORT, () => {
         console.log(`⚡️[server]: Server is running at http://localhost:${PORT}`)

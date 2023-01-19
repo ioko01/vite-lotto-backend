@@ -1,6 +1,6 @@
 import { IBill } from "../models/Bill";
 import { DBBills, billsCollectionRef, db } from "../utils/firebase";
-import { getDocs, addDoc, updateDoc, doc } from "firebase/firestore";
+import { getDocs, addDoc, updateDoc, doc, Query, deleteDoc } from "firebase/firestore";
 
 export interface IBillDoc extends IBill {
     id: string;
@@ -8,7 +8,15 @@ export interface IBillDoc extends IBill {
 
 export class BillController {
 
-    get = async () => {
+    getContain = async (q: Query) => {
+        const { docs } = await getDocs(q)
+        return docs.map((doc) => {
+            return { ...doc.data(), id: doc.id } as IBillDoc
+        })
+    }
+
+
+    getAll = async () => {
         const { docs } = await getDocs(billsCollectionRef)
         return docs.map((doc) => {
             return { ...doc.data(), id: doc.id } as IBillDoc
@@ -22,5 +30,10 @@ export class BillController {
     update = async (id: string, bill: IBill) => {
         const tutorialDoc = doc(db, DBBills, id)
         return await updateDoc(tutorialDoc, DBBills, bill)
+    }
+
+    delete = async (id: string) => {
+        const billDoc = doc(db, DBBills, id)
+        return await deleteDoc(billDoc)
     }
 }
