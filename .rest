@@ -1,8 +1,19 @@
 ###
 GET http://localhost:8000/getbill
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJVSUQiOiIxRk8zN000ZEVKQUtoNTZXUlA3RSIsImlhdCI6MTY3NDExMTM4NSwiZXhwIjoxNjc0Mjg0MTg1fQ.iMLizKcPpDDVkD50mPFbsDqn-SGkDjQRncNfFXOqFa8ltYSglRdtuXZnyEAcfAsCEBxHa7vSFaCWkCkFtioQL0JQ6yCT5xtbh1gmaW3XB0379ISvChUG5Q7FOjTaAFed3Ue_JHjbtjfJPO7WEuEczIPl3T9iZqCTXEvrG8gZZFx6Zmcz6Dd6JB34anY-wU5xQj1ymt3FE1E5DPMH54qwKSIai53CB9nh_gkIObvVCG5RiO2Ta65hiGAIHBnLWDhpgbsaf0cI94D21DxLOUeA4jRVrWBa8o77svBjeagTia7GvTVwJwbHhw6_TZfQtD8ZViPuFNcciMLvh9-EbjK4bg
+
+###
+POST http://localhost:8000/auth/login
+Content-Type: application/json
+
+{
+    "username": "test01",
+    "password": "123456789"
+}
 
 ###
 POST http://localhost:8000/addbill
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJVSUQiOiIxRk8zN000ZEVKQUtoNTZXUlA3RSIsImlhdCI6MTY3NDExMTkwMSwiZXhwIjoxNjc0Mjg0NzAxfQ.YcHyTNb8GW7UAYZmSy_vef4FG0Rus6DGAlsKN0Q1h5laEIxqLhhQulSzn59-Q0QLA9b3lohTQcknBAg-a6pZjjMeh2jl3IT9ZIfWM8XvU6jilUSwfR5sARapHHmbhfq6ijo-lMfKQ-IEgK4RBP0eTxXWTamvVioIN2aLjEzM-x5z3BoCZVycs0ks_lN5QsDt4X3q0xI56tcn-iX-NTj6cCyQ_iWNdV9bpey1hMvUuPj8U6_cuT_TPOOTWhrLVvYDdxO-IGceJulZfQmdJnOq8mbwf52NMvsbeSWbOz3BoCt69hLQ1KMceJoGJ8E8DpTIpICJJPeUnMbxXw9jJdbu9w
 content-type: application/json
 
 {
@@ -135,11 +146,3 @@ content-type: application/json
     "user_create_id": "1"
 }
 
-###
-POST http://localhost:8000/auth/login
-Content-Type: application/json
-
-{
-    "username": "admin01",
-    "password": "123456789"
-}

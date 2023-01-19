@@ -1,8 +1,8 @@
 import { FirebaseOptions, initializeApp } from "firebase/app"
 import { collection, getFirestore } from "firebase/firestore"
-import dotenv from 'dotenv'
+import { config } from "dotenv"
 
-dotenv.config()
+config()
 
 const FIREBASE_CONFIG: FirebaseOptions = {
     apiKey: process.env.VITE_OPS_FIREBASE_API_KEY,

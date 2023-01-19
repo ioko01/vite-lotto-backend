@@ -1,15 +1,8 @@
 import bcrypt from "bcrypt";
-import { IUser, TUserStatusEnum } from "../models/User";
+import { IUser } from "../models/User";
 import { TUserRoleEnum } from "../models/User";
 import { Users, db, usersCollectionRef } from "../utils/firebase";
-import { collection, getDoc, getDocs, addDoc, updateDoc, deleteDoc, doc, where, query, DocumentData } from "firebase/firestore";
-import { omit } from 'lodash';
-import { excludedFields } from "../api/user";
-import { signJwt } from "../utils/jwt";
-// import redisClient from '../utils/redis';
-import { accessTokenExpiresIn } from "../config/default";
-import { validatePassword, validateUsername } from "../utils/validate";
-import { isAuthenticated } from "./Auth";
+import { getDocs, addDoc, updateDoc, doc, where, query } from "firebase/firestore";
 import { GMT } from "../utils/time";
 
 export interface IUserDoc extends IUser {
@@ -63,15 +56,6 @@ export class UserController {
         }
     }
 
-    signToken = async (user: IUserDoc) => {
-        const access_token = signJwt(
-            { sub: user.id },
-            { expiresIn: `${accessTokenExpiresIn}m`, }
-        );
-
-        return { access_token };
-    };
-
     addAdmin = async (user: IUser) => {
 
     }
@@ -81,32 +65,3 @@ export class UserController {
         return await updateDoc(tutorialDoc, Users, user)
     }
 }
-
-
-// export const createSuperAdmin = async (): Promise<Messages | null> => {
-
-
-//     if (!user) {
-//         const hashedPassword = await bcrypt.hash(
-//             process.env.SUPERADMIN_PASSWORD!,
-//             10
-//         );
-
-//         const createUser = await UsersModel.create({
-//             username: process.env.SUPERADMIN_USERNAME!,
-//             password: hashedPassword,
-//             firstname: "superadmin",
-//             lastname: "superadmin",
-//             role: UserRolesEnum.SUPER_ADMIN,
-//             lastActive: GMT(),
-//             updateAt: GMT(),
-//             createAt: GMT(),
-//         });
-
-//         await createUser.save();
-
-//         return { message: "success", statusCode: 200 };
-//     } else {
-//         return null;
-//     }
-// };

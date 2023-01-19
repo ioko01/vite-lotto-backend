@@ -1,6 +1,6 @@
 import { IBill } from "../models/Bill";
 import { Bills, billsCollectionRef, db } from "../utils/firebase";
-import { collection, getDoc, getDocs, addDoc, updateDoc, deleteDoc, doc } from "firebase/firestore";
+import { getDocs, addDoc, updateDoc, doc } from "firebase/firestore";
 
 export interface IBillDoc extends IBill {
     id: string;
