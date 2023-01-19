@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import { IUser } from "../models/User";
 import { TUserRoleEnum } from "../models/User";
 import { DBUsers, db, usersCollectionRef } from "../utils/firebase";
-import { getDocs, addDoc, updateDoc, doc, where, query } from "firebase/firestore";
+import { getDocs, addDoc, updateDoc, doc, where, query, WhereFilterOp, Query } from "firebase/firestore";
 import { GMT } from "../utils/time";
 
 export interface IUserDoc extends IUser {
@@ -10,7 +10,16 @@ export interface IUserDoc extends IUser {
 }
 
 export class UserController {
-    get = async () => {
+
+    getContain = async (q: Query) => {
+        const { docs } = await getDocs(q)
+        return docs.map((doc) => {
+            return { ...doc.data(), id: doc.id } as IUserDoc
+        })
+    }
+
+
+    getAll = async () => {
         const { docs } = await getDocs(usersCollectionRef)
         return docs.map((doc) => {
             return { ...doc.data(), id: doc.id } as IUserDoc

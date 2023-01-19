@@ -7,7 +7,7 @@ import { IUser } from '../models/User';
 import { usersCollectionRef } from '../utils/firebase';
 import bcrypt from "bcrypt";
 import { GMT } from '../utils/time';
-import { createToken } from '../middleware/auth';
+import { createToken } from '../middleware/authenticate';
 import { config } from "dotenv";
 
 config()
@@ -18,7 +18,7 @@ export class ApiUser {
 
     get = (url: string) => {
         APP.get(url, async (_: Request, res: Response) => {
-            const snapshot = await Users.get()
+            const snapshot = await Users.getAll()
             snapshot ? res.status(200).send(snapshot) : res.status(res.statusCode).send({ statusCode: res.statusCode, statusMessage: res.statusMessage })
         })
     }
@@ -77,24 +77,21 @@ export class ApiUser {
             try {
                 const data = req.body as IUser
                 const q = query(usersCollectionRef, where("username", "==", data.username))
-                const { docs } = await getDocs(q)
+                const users = await Users.getContain(q)
 
-                if (docs.length === 0) return res.sendStatus(400)
+                if (users.length === 0) return res.status(400).send({ message: "No Account" })
 
-                docs.map(async (doc) => {
-                    const user = doc.data() as IUser
-                    const id = doc.id
+                users.map(async (user) => {
                     const isPasswordValid = await bcrypt.compare(
                         data.password,
                         user.password
-                    );
-                    if (!isPasswordValid) return res.sendStatus(400)
+                    )
+                    if (!isPasswordValid) return res.status(400).send({ message: "Invalid Password" })
 
-                    const token = createToken(id)
+                    const token = createToken(user.id, user.role)
                     const COOKIE_NAME = process.env.COOKIE_NAME!
                     res.cookie(COOKIE_NAME!, token, {
                         httpOnly: true,
-                        sameSite: "none",
                         secure: true,
                     })
 

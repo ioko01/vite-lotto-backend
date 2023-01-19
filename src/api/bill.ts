@@ -1,14 +1,24 @@
 import { BillController } from "../helpers/Bill";
 import { NextFunction, Request, Response } from 'express'
 import { APP } from "../main";
+import { IToken } from "../models/Token";
+import jwt_decode from "jwt-decode";
+import { TUserRole } from "../models/User";
 
 const Bills = new BillController()
 
 export class ApiBill {
-    get = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void) => {
-        APP.get(url, middleware, async (_: Request, res: Response) => {
-            const snapshot = await Bills.get()
-            snapshot ? res.status(200).send(snapshot) : res.status(res.statusCode).send({ statusCode: res.statusCode, statusMessage: res.statusMessage })
+    get = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
+        APP.get(url, middleware, async (req: Request, res: Response) => {
+            const auth = req.headers.authorization && req.headers.authorization.split(" ");
+            const token = auth![1]
+            const decodedToken = jwt_decode<IToken>(token);
+            if (roles.includes(decodedToken.role)) {
+                const snapshot = await Bills.get()
+                snapshot ? res.status(200).send(snapshot) : res.status(res.statusCode).send({ statusCode: res.statusCode, statusMessage: res.statusMessage })
+            } else {
+                return res.sendStatus(401)
+            }
         })
     }
 

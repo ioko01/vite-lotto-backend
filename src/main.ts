@@ -7,7 +7,8 @@ import { ApiUser } from './api/user';
 import { ApiStore } from './api/store';
 import { PORT, corsOption } from './config/default';
 import cookieParser from 'cookie-parser';
-import { authenticateJWT } from './middleware/auth';
+import { authenticate } from './middleware/authenticate';
+import { TUserRoleEnum } from './models/User';
 
 dotenv.config()
 
@@ -22,12 +23,12 @@ const server = async () => {
     const User = new ApiUser()
     const Store = new ApiStore()
 
-    Bill.get('/getbill', authenticateJWT)
-    Bill.add('/addbill', authenticateJWT)
-    Bill.update('/updatebill', authenticateJWT)
+    Bill.get('/getbill', authenticate, ["ADMIN", "AGENT"])
+    Bill.add('/addbill', authenticate)
+    Bill.update('/updatebill', authenticate)
 
-    Store.get('/getstore', authenticateJWT)
-    Store.add('/addstore', authenticateJWT)
+    Store.get('/getstore', authenticate)
+    Store.add('/addstore', authenticate)
 
     User.get('/getuser')
     User.register('/auth/register')
