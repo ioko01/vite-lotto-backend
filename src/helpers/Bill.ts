@@ -8,7 +8,7 @@ export interface IBillDoc extends IBill {
 
 export class BillController {
 
-    getContain = async (q: Query) => {
+    getContain = async (q: Query, db: string) => {
         const { docs } = await getDocs(q)
         return docs.map((doc) => {
             return { ...doc.data(), id: doc.id } as IBillDoc

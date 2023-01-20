@@ -8,7 +8,21 @@ export interface IStoreDoc extends IStore {
 
 export class StoreController {
 
-    get = async () => {
+    getContain = async () => {
+        const { docs } = await getDocs(storesCollectionRef)
+        return docs.map((doc) => {
+            return { ...doc.data(), id: doc.id } as IStoreDoc
+        })
+    }
+
+    getMe = async () => {
+        const { docs } = await getDocs(storesCollectionRef)
+        return docs.map((doc) => {
+            return { ...doc.data(), id: doc.id } as IStoreDoc
+        })
+    }
+
+    getAll = async () => {
         const { docs } = await getDocs(storesCollectionRef)
         return docs.map((doc) => {
             return { ...doc.data(), id: doc.id } as IStoreDoc

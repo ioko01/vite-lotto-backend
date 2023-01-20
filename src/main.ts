@@ -9,6 +9,7 @@ import { PORT, corsOption } from './config/default';
 import cookieParser from 'cookie-parser';
 import { authenticate } from './middleware/authenticate';
 import { TUserRoleEnum } from './models/User';
+import { ApiLotto } from './api/lotto';
 
 dotenv.config()
 
@@ -22,19 +23,29 @@ const server = async () => {
     const Bill = new ApiBill()
     const User = new ApiUser()
     const Store = new ApiStore()
+    const Lotto = new ApiLotto()
 
-    Bill.getBillMe('/getbillme', authenticate, ["ADMIN", "AGENT", "MANAGER", "MEMBER"])
-    Bill.getBillAll('/getbillall', authenticate, ["ADMIN", "AGENT", "MANAGER"])
-    Bill.addBill('/addbill', authenticate, ["ADMIN", "AGENT", "MANAGER", "MEMBER"])
-    Bill.updateBill('/updatebill', authenticate, ["ADMIN", "AGENT", "MANAGER"])
-    Bill.deleteBill('/deletebill', authenticate, ["ADMIN", "AGENT", "MANAGER", "MEMBER"])
+    Bill.getBillId('/get/bill/id/:id', authenticate, ["ADMIN", "AGENT", "MANAGER", "MEMBER"])
+    Bill.getBillMe('/get/bill/me', authenticate, ["ADMIN", "AGENT", "MANAGER", "MEMBER"])
+    Bill.getBillAll('/get/bill/all', authenticate, ["ADMIN", "AGENT", "MANAGER"])
+    Bill.addBill('/add/bill', authenticate, ["ADMIN", "AGENT", "MANAGER", "MEMBER"])
+    Bill.updateBill('/update/bill', authenticate, ["ADMIN", "AGENT", "MANAGER"])
+    Bill.deleteBill('/delete/bill', authenticate, ["ADMIN", "AGENT", "MANAGER", "MEMBER"])
 
-    Store.get('/getstore', authenticate)
-    Store.add('/addstore', authenticate)
+    Lotto.getLottoAll('/get/lotto/all', authenticate, ["ADMIN", "AGENT", "MANAGER", "MEMBER"])
+    Lotto.getLottoId('/get/lotto/id/:id', authenticate, ["ADMIN", "AGENT", "MANAGER", "MEMBER"])
+    Lotto.getLottoMe('/get/lotto/me', authenticate, ["ADMIN", "AGENT", "MANAGER", "MEMBER"])
+    Lotto.addLotto('/add/lotto', authenticate, ["ADMIN", "AGENT", "MANAGER"])
+    Lotto.deleteLotto('/delete/lotto', authenticate, ["ADMIN", "AGENT", "MANAGER"])
+    Lotto.updateLotto('/update/lotto', authenticate, ["ADMIN", "AGENT", "MANAGER"])
 
-    User.get('/getuser', authenticate)
-    User.register('/auth/register')
+    Store.getStoreAll('/get/store', authenticate, ["ADMIN"])
+    Store.addStore('/add/store', authenticate, ["ADMIN"])
+
+    User.get('/get/user', authenticate)
+    User.register('/register')
     User.login('/auth/login')
+    User.logout('/auth/logout', authenticate, ["ADMIN", "AGENT", "MANAGER", "MEMBER"])
 
     APP.listen(PORT, () => {
         console.log(`⚡️[server]: Server is running at http://localhost:${PORT}`)

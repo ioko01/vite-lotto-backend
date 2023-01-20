@@ -1,7 +1,17 @@
-@auth=Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJVSUQiOiIxRk8zN000ZEVKQUtoNTZXUlA3RSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTY3NDEzOTUzNiwiZXhwIjoxNjc0MzEyMzM2fQ.nanCrMnC5Z6Xel87GsvZ9Lx-exn2rE6NtUO-nwSDNf-FIrxWVgiZBZgTQl-S5p-eculMzp_doK0wiMuoj5OCuF2UsjrsYt84Tjw0xNPqSnsHTbb1o7LS-2jqQ9DJavQNJ-xS1IGTf7MOmSRkpN0GMqF2EJ6fnAdUwAUJv_hAcFdplY5OY7Uso4CWXAIvtLaWkiMTtZbNYM269CihRlfcym4lX8WV6rZgPCOQSUoBNAXq69sU_wAtzPYUPduvp8HohcenxDemXwQsaUedFUno8en_s3nc9gKTU_gZiHyLciFNERN8seJAijqkoirp513iGVjnA_oL4Y_qWbUi52NZWg
+@auth=Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJVSUQiOiJWR1lwUFNYN3dmQWpiaURiY3pRTCIsInRva2VuVmVyc2lvbiI6MSwicm9sZSI6Ik1FTUJFUiIsImlhdCI6MTY3NDIwNTg0OSwiZXhwIjoxNjc0Mzc4NjQ5fQ.IcLS4Htb-1MM_HjACLHRxbtiJkVLP3xobR5_PRnjD8_ktyiF3H30zMSTlOyovsusr14vISa5uGoCrhbeTUVPDahzjahZTuwJMXK6qtfggkYK-lHWeWT6PyI4_gaG4t8LYUK47m0NH-Q2-fYTv4m-87NEV6t71FuP3Pt6kidJCNFHm8zeCtAlAd3KwnL6iRBSCfel3tQWhLJUr18WkEqWxJ-NBxJooF6nxAD67rtfsI5U-6Lwnblr6uUpptA2rWH4HYRjv9QZt3V3ziWeA4tM-A593j90attmqbOXxpxfOI3kookDXXdxmXcxbFhRi50GhSu54PaCl8bEqYKQD5bX7A
+
 
 ###
-GET http://localhost:8000/getbillme
+GET http://localhost:8000/get/bill/id/RIyhN9nccbfdG05decC4
+Authorization: {{auth}}
+
+
+###
+GET http://localhost:8000/get/bill/me
+Authorization: {{auth}}
+
+###
+GET http://localhost:8000/get/bill/all
 Authorization: {{auth}}
 
 ###
@@ -14,16 +24,26 @@ Content-Type: application/json
 }
 
 ###
-DELETE  http://localhost:8000/deletebill
+POST http://localhost:8000/auth/logout
 Authorization: {{auth}}
 Content-Type: application/json
 
 {
-    "id": "KCCa7BiSM4jNf8p0My1D"
+    "username": "test01",
+    "password": "123456789"
 }
 
 ###
-POST http://localhost:8000/addbill
+DELETE  http://localhost:8000/delete/bill
+Authorization: {{auth}}
+Content-Type: application/json
+
+{
+    "id": "ukRnArzUqFkBoL043v09"
+}
+
+###
+POST http://localhost:8000/add/bill
 Authorization: {{auth}}
 content-type: application/json
 
@@ -87,12 +107,16 @@ content-type: application/json
 }
 
 ###
-POST http://localhost:8000/addlotto
+GET http://localhost:8000/get/lotto/all
+Authorization: {{auth}}
+
+###
+POST http://localhost:8000/add/lotto
 Authorization: {{auth}}
 content-type: application/json
 
 {
-    "name": "ดาวน์โจนส์ VIP",
+    "name": "ลาว VIP",
     "img_flag": "jone.jpg",
     "open": "2023-01-19",
     "close": "2023-01-19",
@@ -101,24 +125,16 @@ content-type: application/json
 }
 
 ###
-POST http://localhost:8000/auth/admin
+DELETE  http://localhost:8000/delete/lotto
+Authorization: {{auth}}
 content-type: application/json
 
 {
-    "store":{
-        "name": "ร้านมั่งมี",
-        "img_logo": "logo.jpg"
-    },
-    "username": "admin01",
-    "password": "123456789",
-    "fullname": "admin",
-    "role": "ADMIN",
-    "status": "REGULAR",
-    "credit": 0
+    "id": "4ORTN9HDmbInvWB8yoCA"
 }
 
 ###
-POST http://localhost:8000/addstore
+POST http://localhost:8000/add/store
 content-type: application/json
 
 {
@@ -130,7 +146,7 @@ content-type: application/json
 }
 
 ###
-POST http://localhost:8000/auth/register
+POST http://localhost:8000/register
 content-type: application/json
 
 {
@@ -144,11 +160,6 @@ content-type: application/json
     "username": "test01",
     "password": "123456789",
     "fullname": "test",
-    "role": "ADMIN",
-    "status": "REGULAR",
-    "credit": 0,
-    "created_at":"2023-01-13",
-    "updated_at":"2023-01-13",
-    "user_create_id": "1"
+    "credit": 0
 }
 

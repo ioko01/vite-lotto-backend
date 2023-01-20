@@ -22,9 +22,16 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
     }
 }
 
-export const createToken = (UID: string, role: TUserRole) => {
-    return jwt.sign({ UID, role }, privateKey, {
+export const createToken = (UID: string, tokenVersion: number, role: TUserRole) => {
+    return jwt.sign({ UID, tokenVersion, role }, privateKey, {
         algorithm: "RS256",
         expiresIn: "2d",
     });
 };
+
+export function destroyToken(UID: string, role: TUserRole) {
+    return jwt.sign({ UID, role }, privateKey, {
+        algorithm: "RS256",
+        expiresIn: "0ms",
+    });
+}

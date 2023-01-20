@@ -27,3 +27,6 @@ export const billsCollectionRef = collection(db, DBBills)
 export const DBStores = "stores"
 export const storesCollectionRef = collection(db, DBStores)
 
+export const DBLottos = "lottos"
+export const lottosCollectionRef = collection(db, DBLottos)
+
