@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { APP } from "../main";
 import { getDocs, query, where } from 'firebase/firestore';
 import { validatePassword, validateUsername } from '../utils/validate';
-import { IUser, TUserRole } from '../models/User';
+import { IUser, TUserRole, TUserRoleEnum } from '../models/User';
 import { DBUsers, usersCollectionRef } from '../utils/firebase';
 import bcrypt from "bcrypt";
 import { GMT } from '../utils/time';
@@ -53,9 +53,13 @@ export class ApiUser {
         })
     }
 
-    addUser = (url: string) => {
+    addUserAdmin = (url: string) => {
         APP.post(url, async (req: Request, res: Response) => {
             try {
+                const q = query(usersCollectionRef, where("role", "==", TUserRoleEnum.ADMIN))
+                const isAdmin = await getDocs(q)
+                if (isAdmin.docs.length > 0) return res.sendStatus(401)
+
                 const data = req.body as IUser
                 const isValidateUsername = validateUsername(data.username);
                 if (!isValidateUsername) throw new Error("username invalid");
@@ -63,8 +67,8 @@ export class ApiUser {
                 const isValidatePassword = validatePassword(data.password);
                 if (!isValidatePassword) throw new Error("password invalid");
 
-                const q = query(usersCollectionRef, where("username", "==", data.username))
-                const { docs } = await getDocs(q)
+                const q2 = query(usersCollectionRef, where("username", "==", data.username))
+                const { docs } = await getDocs(q2)
 
                 if (docs.length > 0) res.sendStatus(400).send({ message: "this user is used" })
 
@@ -75,7 +79,7 @@ export class ApiUser {
                     password: hashedPassword,
                     fullname: data.fullname,
                     credit: data.credit,
-                    role: "MEMBER",
+                    role: "ADMIN",
                     status: "REGULAR",
                     created_at: GMT(),
                     updated_at: GMT(),
@@ -90,7 +94,171 @@ export class ApiUser {
                         return res.send({ statusCode: res.statusCode, message: error })
                     })
 
+            } catch (err: any) {
+                if (err.code === 11000) {
+                    return res.status(409).json({
+                        status: 'fail',
+                        message: 'username already exist',
+                    });
+                }
+            }
+        })
+    }
 
+    addUserAgent = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
+        APP.post(url, middleware, async (req: Request, res: Response) => {
+            try {
+                const authorize = await authorization(req, roles)
+                if (authorize) {
+                    if (authorize !== 401) {
+                        const data = req.body as IUser
+                        const isValidateUsername = validateUsername(data.username);
+                        if (!isValidateUsername) throw new Error("username invalid");
+
+                        const isValidatePassword = validatePassword(data.password);
+                        if (!isValidatePassword) throw new Error("password invalid");
+
+                        const q = query(usersCollectionRef, where("username", "==", data.username))
+                        const { docs } = await getDocs(q)
+
+                        if (docs.length > 0) res.sendStatus(400).send({ message: "this user is used" })
+
+                        const hashedPassword = await bcrypt.hash(data.password, 10);
+
+                        const user: IUser = {
+                            username: data.username,
+                            password: hashedPassword,
+                            fullname: data.fullname,
+                            credit: data.credit,
+                            role: "AGENT",
+                            status: "REGULAR",
+                            created_at: GMT(),
+                            updated_at: GMT(),
+                            tokenVersion: 1
+                        }
+
+                        await Helpers.create(usersCollectionRef, user)
+                            .then(async () => {
+                                return res.sendStatus(200)
+                            })
+                            .catch(error => {
+                                return res.send({ statusCode: res.statusCode, message: error })
+                            })
+
+                    } else {
+                        return res.sendStatus(authorize)
+                    }
+                }
+            } catch (err: any) {
+                if (err.code === 11000) {
+                    return res.status(409).json({
+                        status: 'fail',
+                        message: 'username already exist',
+                    });
+                }
+            }
+        })
+    }
+
+    addUserManager = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
+        APP.post(url, middleware, async (req: Request, res: Response) => {
+            try {
+                const authorize = await authorization(req, roles)
+                if (authorize) {
+                    if (authorize !== 401) {
+                        const data = req.body as IUser
+                        const isValidateUsername = validateUsername(data.username);
+                        if (!isValidateUsername) throw new Error("username invalid");
+
+                        const isValidatePassword = validatePassword(data.password);
+                        if (!isValidatePassword) throw new Error("password invalid");
+
+                        const q = query(usersCollectionRef, where("username", "==", data.username))
+                        const { docs } = await getDocs(q)
+
+                        if (docs.length > 0) res.sendStatus(400).send({ message: "this user is used" })
+
+                        const hashedPassword = await bcrypt.hash(data.password, 10);
+
+                        const user: IUser = {
+                            username: data.username,
+                            password: hashedPassword,
+                            fullname: data.fullname,
+                            credit: data.credit,
+                            role: "MANAGER",
+                            status: "REGULAR",
+                            created_at: GMT(),
+                            updated_at: GMT(),
+                            tokenVersion: 1
+                        }
+
+                        await Helpers.create(usersCollectionRef, user)
+                            .then(async () => {
+                                return res.sendStatus(200)
+                            })
+                            .catch(error => {
+                                return res.send({ statusCode: res.statusCode, message: error })
+                            })
+                    } else {
+                        return res.sendStatus(authorize)
+                    }
+                }
+
+            } catch (err: any) {
+                if (err.code === 11000) {
+                    return res.status(409).json({
+                        status: 'fail',
+                        message: 'username already exist',
+                    });
+                }
+            }
+        })
+    }
+
+    addUserMember = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
+        APP.post(url, middleware, async (req: Request, res: Response) => {
+            try {
+                const authorize = await authorization(req, roles)
+                if (authorize) {
+                    if (authorize !== 401) {
+                        const data = req.body as IUser
+                        const isValidateUsername = validateUsername(data.username);
+                        if (!isValidateUsername) throw new Error("username invalid");
+
+                        const isValidatePassword = validatePassword(data.password);
+                        if (!isValidatePassword) throw new Error("password invalid");
+
+                        const q = query(usersCollectionRef, where("username", "==", data.username))
+                        const { docs } = await getDocs(q)
+
+                        if (docs.length > 0) res.sendStatus(400).send({ message: "this user is used" })
+
+                        const hashedPassword = await bcrypt.hash(data.password, 10);
+
+                        const user: IUser = {
+                            username: data.username,
+                            password: hashedPassword,
+                            fullname: data.fullname,
+                            credit: data.credit,
+                            role: "MEMBER",
+                            status: "REGULAR",
+                            created_at: GMT(),
+                            updated_at: GMT(),
+                            tokenVersion: 1
+                        }
+
+                        await Helpers.create(usersCollectionRef, user)
+                            .then(async () => {
+                                return res.sendStatus(200)
+                            })
+                            .catch(error => {
+                                return res.send({ statusCode: res.statusCode, message: error })
+                            })
+
+                    } else {
+                        return res.sendStatus(authorize)
+                    }
+                }
             } catch (err: any) {
                 if (err.code === 11000) {
                     return res.status(409).json({

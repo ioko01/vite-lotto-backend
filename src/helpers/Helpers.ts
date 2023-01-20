@@ -8,6 +8,9 @@ import { GMT } from "../utils/time";
 import { ILotto } from "../models/Lotto";
 import { IToken } from "../models/Token";
 import { IRate } from "../models/Rate";
+import { IDigitSemi } from "../models/DigitSemi";
+import { IDigitClose } from "../models/DigitClose";
+import { ICheckReward } from "../models/CheckReward";
 
 export interface IBillDoc extends IBill {
     id: string;
@@ -29,17 +32,29 @@ export interface IRateDoc extends IRate {
     id: string;
 }
 
+export interface IDigitSemiDoc extends IDigitSemi {
+    id: string;
+}
+
+export interface IDigitCloseDoc extends IDigitClose {
+    id: string;
+}
+
+export interface ICheckRewardDoc extends ICheckReward {
+    id: string;
+}
+
 export class HelperController {
 
     getId = async (doc: DocumentReference) => {
         const id = await getDoc(doc)
-        return id.data() as IBillDoc | IStoreDoc | IUserDoc
+        return id.data() as IBillDoc | IStoreDoc | IUserDoc | ILottoDoc | IRateDoc | IDigitSemiDoc | IDigitCloseDoc | ICheckRewardDoc
     }
 
     getContain = async (q: Query) => {
         const { docs } = await getDocs(q)
         return docs.map((doc) => {
-            return { ...doc.data(), id: doc.id } as IBillDoc | IStoreDoc | IUserDoc | ILottoDoc | IRateDoc
+            return { ...doc.data(), id: doc.id } as IBillDoc | IStoreDoc | IUserDoc | ILottoDoc | IRateDoc | IDigitSemiDoc | IDigitCloseDoc | ICheckRewardDoc
         })
     }
 
@@ -47,28 +62,28 @@ export class HelperController {
     getAll = async (reference: CollectionReference) => {
         const { docs } = await getDocs(reference)
         return docs.map((doc) => {
-            return { ...doc.data(), id: doc.id } as IBillDoc | IStoreDoc | IUserDoc | ILottoDoc | IRateDoc
+            return { ...doc.data(), id: doc.id } as IBillDoc | IStoreDoc | IUserDoc | ILottoDoc | IRateDoc | IDigitSemiDoc | IDigitCloseDoc | ICheckRewardDoc
         })
     }
 
-    add = async (reference: CollectionReference, data: IBill | IStore | IUser | ILotto | IRate) => {
+    add = async (reference: CollectionReference, data: IBill | IStore | IUser | ILotto | IRate | IDigitSemi | IDigitClose | ICheckReward) => {
         return await addDoc(reference, data)
     }
 
-    update = async (id: string, dbname: string, data: UpdateData<IBill | IStore | IUser | ILotto | IRate>) => {
+    update = async (id: string, dbname: string, data: UpdateData<IBill | IStore | IUser | ILotto | IRate | IDigitSemi | IDigitClose | ICheckReward>) => {
         const isDoc = doc(db, dbname, id)
         return await updateDoc(isDoc, data)
     }
 
     delete = async (id: string, dbname: string) => {
-        const data = await this.getId(doc(db, dbname, id)) as IBillDoc | IStoreDoc | IUserDoc | ILottoDoc | IRateDoc
+        const data = await this.getId(doc(db, dbname, id)) as IBillDoc | IStoreDoc | IUserDoc | ILottoDoc | IRateDoc | IDigitSemiDoc | IDigitCloseDoc | ICheckRewardDoc
         if (!data) return 404
 
         const isDoc = doc(db, dbname, id)
         return await deleteDoc(isDoc)
     }
 
-    create = async (reference: CollectionReference, data: IBill | IStore | IUser | ILotto | IRate) => {
+    create = async (reference: CollectionReference, data: IBill | IStore | IUser | ILotto | IRate | IDigitSemi | IDigitClose | ICheckReward) => {
         return await addDoc(reference, data)
     }
 

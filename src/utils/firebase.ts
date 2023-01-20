@@ -32,3 +32,12 @@ export const lottosCollectionRef = collection(db, DBLottos)
 
 export const DBRates = "rates"
 export const ratesCollectionRef = collection(db, DBRates)
+
+export const DBDigitsSemi = "digits_semi"
+export const digitsSemiCollectionRef = collection(db, DBDigitsSemi)
+
+export const DBDigitsClose = "digits_close"
+export const digitsCloseCollectionRef = collection(db, DBDigitsClose)
+
+export const DBCheckRewards = "check_rewards"
+export const checkRewardsCollectionRef = collection(db, DBCheckRewards)
