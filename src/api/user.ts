@@ -53,7 +53,7 @@ export class ApiUser {
         })
     }
 
-    register = (url: string) => {
+    addUser = (url: string) => {
         APP.post(url, async (req: Request, res: Response) => {
             try {
                 const data = req.body as IUser
@@ -171,7 +171,7 @@ export class ApiUser {
         })
     }
 
-    update = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
+    updateUser = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
         APP.put(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
@@ -191,7 +191,7 @@ export class ApiUser {
         })
     }
 
-    delete = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
+    deleteUser = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
         APP.delete(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
