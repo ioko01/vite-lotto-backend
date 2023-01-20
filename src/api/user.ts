@@ -17,10 +17,39 @@ const Helpers = new HelperController()
 
 export class ApiUser {
 
-    get = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void) => {
-        APP.get(url, middleware, async (_: Request, res: Response) => {
-            const snapshot = await Helpers.getAll(usersCollectionRef) as IUserDoc[]
-            snapshot ? res.status(200).send(snapshot) : res.status(res.statusCode).send({ statusCode: res.statusCode, statusMessage: res.statusMessage })
+    getUserMe = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
+        APP.get(url, middleware, async (req: Request, res: Response) => {
+            try {
+                const authorize = await authorization(req, roles)
+                if (authorize) {
+                    if (authorize !== 401) {
+                        const snapshot = await Helpers.getAll(usersCollectionRef) as IUserDoc[]
+                        snapshot ? res.status(200).send(snapshot) : res.status(res.statusCode).send({ statusCode: res.statusCode, statusMessage: res.statusMessage })
+                    } else {
+                        return res.sendStatus(authorize)
+                    }
+                }
+            } catch (err: any) {
+                res.send(err)
+            }
+        })
+    }
+
+    getUserAll = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
+        APP.get(url, middleware, async (req: Request, res: Response) => {
+            try {
+                const authorize = await authorization(req, roles)
+                if (authorize) {
+                    if (authorize !== 401) {
+                        const snapshot = await Helpers.getAll(usersCollectionRef) as IUserDoc[]
+                        snapshot ? res.status(200).send(snapshot) : res.status(res.statusCode).send({ statusCode: res.statusCode, statusMessage: res.statusMessage })
+                    } else {
+                        return res.sendStatus(authorize)
+                    }
+                }
+            } catch (err: any) {
+                res.send(err)
+            }
         })
     }
 
@@ -142,12 +171,51 @@ export class ApiUser {
         })
     }
 
-    update = (url: string) => {
-        APP.put(url, async (req: Request, res: Response) => {
+    update = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
+        APP.put(url, middleware, async (req: Request, res: Response) => {
+            try {
+                const authorize = await authorization(req, roles)
+                if (authorize) {
+                    if (authorize !== 401) {
+
+                    } else {
+                        return res.sendStatus(authorize)
+                    }
+                } else {
+                    return res.sendStatus(401)
+                }
+
+            } catch (error) {
+                res.status(res.statusCode).send(error);
+            }
         })
     }
 
-    delete = (url: string) => {
+    delete = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
+        APP.delete(url, middleware, async (req: Request, res: Response) => {
+            try {
+                const authorize = await authorization(req, roles)
+                if (authorize) {
+                    if (authorize !== 401) {
+                        const data = req.body as { id: string }
+                        await Helpers.delete(data.id, DBUsers)
+                            .then((data) => {
+                                if (data === 404) return res.sendStatus(data)
+                                return res.send({ statusCode: res.statusCode, message: "OK" })
+                            })
+                            .catch(error => {
+                                return res.send({ statusCode: res.statusCode, message: error })
+                            })
+                    } else {
+                        return res.sendStatus(authorize)
+                    }
+                } else {
+                    return res.sendStatus(401)
+                }
 
+            } catch (error) {
+                res.status(res.statusCode).send(error);
+            }
+        })
     }
 }

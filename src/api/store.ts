@@ -10,46 +10,73 @@ const Helpers = new HelperController()
 export class ApiStore {
     getStoreContain = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
         APP.get(url, middleware, async (req: Request, res: Response) => {
-            const authorize = await authorization(req, roles)
-            if (authorize) {
-                if (authorize !== 401) {
+            try {
+                const authorize = await authorization(req, roles)
+                if (authorize) {
+                    if (authorize !== 401) {
 
+                    } else {
+                        return res.sendStatus(authorize)
+                    }
                 } else {
-                    return res.sendStatus(authorize)
+                    return res.sendStatus(401)
                 }
-            } else {
-                return res.sendStatus(401)
+            } catch (err: any) {
+                if (err.code === 11000) {
+                    return res.status(409).json({
+                        status: 'fail',
+                        message: 'username already exist',
+                    });
+                }
             }
         })
     }
 
     getStoreMe = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
         APP.get(url, middleware, async (req: Request, res: Response) => {
-            const authorize = await authorization(req, roles)
-            if (authorize) {
-                if (authorize !== 401) {
+            try {
+                const authorize = await authorization(req, roles)
+                if (authorize) {
+                    if (authorize !== 401) {
 
+                    } else {
+                        return res.sendStatus(authorize)
+                    }
                 } else {
-                    return res.sendStatus(authorize)
+                    return res.sendStatus(401)
                 }
-            } else {
-                return res.sendStatus(401)
+            } catch (err: any) {
+                if (err.code === 11000) {
+                    return res.status(409).json({
+                        status: 'fail',
+                        message: 'username already exist',
+                    });
+                }
             }
         })
     }
 
     getStoreAll = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
         APP.get(url, middleware, async (req: Request, res: Response) => {
-            const authorize = await authorization(req, roles)
-            if (authorize) {
-                if (authorize !== 401) {
-                    const snapshot = await Helpers.getAll(storesCollectionRef)
-                    snapshot ? res.status(200).send(snapshot) : res.status(res.statusCode).send({ statusCode: res.statusCode, statusMessage: res.statusMessage })
+            try {
+                const authorize = await authorization(req, roles)
+                if (authorize) {
+                    if (authorize !== 401) {
+                        const snapshot = await Helpers.getAll(storesCollectionRef)
+                        snapshot ? res.status(200).send(snapshot) : res.status(res.statusCode).send({ statusCode: res.statusCode, statusMessage: res.statusMessage })
+                    } else {
+                        return res.sendStatus(authorize)
+                    }
                 } else {
-                    return res.sendStatus(authorize)
+                    return res.sendStatus(401)
                 }
-            } else {
-                return res.sendStatus(401)
+            } catch (err: any) {
+                if (err.code === 11000) {
+                    return res.status(409).json({
+                        status: 'fail',
+                        message: 'username already exist',
+                    });
+                }
             }
         })
     }

@@ -42,7 +42,8 @@ const server = async () => {
     Store.getStoreAll('/get/store', authenticate, ["ADMIN"])
     Store.addStore('/add/store', authenticate, ["ADMIN"])
 
-    User.get('/get/user', authenticate)
+    User.getUserAll('/get/user', authenticate, ["ADMIN"])
+    User.getUserMe('/get/user', authenticate, ["ADMIN", "AGENT", "MANAGER"])
     User.register('/register')
     User.login('/auth/login')
     User.logout('/auth/logout', authenticate, ["ADMIN", "AGENT", "MANAGER", "MEMBER"])

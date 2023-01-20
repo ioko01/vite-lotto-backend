@@ -15,55 +15,82 @@ const Helpers = new HelperController()
 export class ApiBill {
     getBillId = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
         APP.get(url, middleware, async (req: Request, res: Response) => {
-            const authorize = await authorization(req, roles)
-            if (authorize) {
-                if (authorize !== 401) {
-                    const id = req.params as { id: string }
-                    const bill = await Helpers.getId(doc(db, DBBills, id.id))
-                    if (!bill) return res.sendStatus(404)
-                    return res.json(bill)
+            try {
+                const authorize = await authorization(req, roles)
+                if (authorize) {
+                    if (authorize !== 401) {
+                        const id = req.params as { id: string }
+                        const bill = await Helpers.getId(doc(db, DBBills, id.id))
+                        if (!bill) return res.sendStatus(404)
+                        return res.json(bill)
+                    } else {
+                        return res.sendStatus(authorize)
+                    }
                 } else {
-                    return res.sendStatus(authorize)
+                    return res.sendStatus(401)
                 }
-            } else {
-                return res.sendStatus(401)
-            }
 
+            } catch (err: any) {
+                if (err.code === 11000) {
+                    return res.status(409).json({
+                        status: 'fail',
+                        message: 'username already exist',
+                    });
+                }
+            }
         })
     }
 
     getBillMe = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
         APP.get(url, middleware, async (req: Request, res: Response) => {
-            const authorize = await authorization(req, roles)
-            if (authorize) {
-                if (authorize !== 401) {
-                    const q = query(billsCollectionRef, where("user_create_id", "==", authorize.UID))
-                    const snapshot = await Helpers.getContain(q) as IBillDoc[]
-                    snapshot ? res.status(200).send(snapshot) : res.status(res.statusCode).send({ statusCode: res.statusCode, statusMessage: res.statusMessage })
+            try {
+                const authorize = await authorization(req, roles)
+                if (authorize) {
+                    if (authorize !== 401) {
+                        const q = query(billsCollectionRef, where("user_create_id", "==", authorize.UID))
+                        const snapshot = await Helpers.getContain(q) as IBillDoc[]
+                        snapshot ? res.status(200).send(snapshot) : res.status(res.statusCode).send({ statusCode: res.statusCode, statusMessage: res.statusMessage })
+                    } else {
+                        return res.sendStatus(authorize)
+                    }
                 } else {
-                    return res.sendStatus(authorize)
+                    return res.sendStatus(401)
                 }
-            } else {
-                return res.sendStatus(401)
-            }
 
+            } catch (err: any) {
+                if (err.code === 11000) {
+                    return res.status(409).json({
+                        status: 'fail',
+                        message: 'username already exist',
+                    });
+                }
+            }
         })
     }
 
     getBillAll = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
         APP.get(url, middleware, async (req: Request, res: Response) => {
-            const authorize = await authorization(req, roles)
-            if (authorize) {
-                if (authorize !== 401) {
-                    const snapshot = await Helpers.getAll(billsCollectionRef) as IBillDoc[]
-                    snapshot ? res.status(200).send(snapshot) : res.status(res.statusCode).send({ statusCode: res.statusCode, statusMessage: res.statusMessage })
+            try {
+                const authorize = await authorization(req, roles)
+                if (authorize) {
+                    if (authorize !== 401) {
+                        const snapshot = await Helpers.getAll(billsCollectionRef) as IBillDoc[]
+                        snapshot ? res.status(200).send(snapshot) : res.status(res.statusCode).send({ statusCode: res.statusCode, statusMessage: res.statusMessage })
+                    } else {
+                        return res.sendStatus(authorize)
+                    }
                 } else {
-                    return res.sendStatus(authorize)
+                    return res.sendStatus(401)
                 }
-            } else {
-                return res.sendStatus(401)
-            }
 
+            } catch (err: any) {
+                if (err.code === 11000) {
+                    return res.status(409).json({
+                        status: 'fail',
+                        message: 'username already exist',
+                    });
+                }
+            }
         })
     }
 

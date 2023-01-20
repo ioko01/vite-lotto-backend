@@ -15,54 +15,81 @@ export class ApiLotto {
 
     getLottoId = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
         APP.get(url, middleware, async (req: Request, res: Response) => {
-            const authorize = await authorization(req, roles)
-            if (authorize) {
-                if (authorize !== 401) {
-                    const data = req.body as { id: string }
-                    const lotto = await Helpers.getId(doc(db, DBLottos, data.id))
-                    return res.json(lotto)
+            try {
+                const authorize = await authorization(req, roles)
+                if (authorize) {
+                    if (authorize !== 401) {
+                        const data = req.body as { id: string }
+                        const lotto = await Helpers.getId(doc(db, DBLottos, data.id))
+                        return res.json(lotto)
+                    } else {
+                        return res.sendStatus(authorize)
+                    }
                 } else {
-                    return res.sendStatus(authorize)
+                    return res.sendStatus(401)
                 }
-            } else {
-                return res.sendStatus(401)
-            }
 
+            } catch (err: any) {
+                if (err.code === 11000) {
+                    return res.status(409).json({
+                        status: 'fail',
+                        message: 'username already exist',
+                    });
+                }
+            }
         })
     }
 
     getLottoMe = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
         APP.get(url, middleware, async (req: Request, res: Response) => {
-            const authorize = await authorization(req, roles)
-            if (authorize) {
-                if (authorize !== 401) {
-                    const q = query(lottosCollectionRef, where("user_create_id", "==", authorize.UID))
-                    const snapshot = await Helpers.getContain(q) as ILottoDoc[]
-                    snapshot ? res.status(200).send(snapshot) : res.status(res.statusCode).send({ statusCode: res.statusCode, statusMessage: res.statusMessage })
+            try {
+                const authorize = await authorization(req, roles)
+                if (authorize) {
+                    if (authorize !== 401) {
+                        const q = query(lottosCollectionRef, where("user_create_id", "==", authorize.UID))
+                        const snapshot = await Helpers.getContain(q) as ILottoDoc[]
+                        snapshot ? res.status(200).send(snapshot) : res.status(res.statusCode).send({ statusCode: res.statusCode, statusMessage: res.statusMessage })
+                    } else {
+                        return res.sendStatus(authorize)
+                    }
                 } else {
-                    return res.sendStatus(authorize)
+                    return res.sendStatus(401)
                 }
-            } else {
-                return res.sendStatus(401)
-            }
 
+            } catch (err: any) {
+                if (err.code === 11000) {
+                    return res.status(409).json({
+                        status: 'fail',
+                        message: 'username already exist',
+                    });
+                }
+            }
         })
     }
 
     getLottoAll = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
         APP.get(url, middleware, async (req: Request, res: Response) => {
-            const authorize = await authorization(req, roles)
-            if (authorize) {
-                if (authorize !== 401) {
-                    const snapshot = await Helpers.getAll(lottosCollectionRef) as ILottoDoc[]
-                    snapshot ? res.status(200).send(snapshot) : res.status(res.statusCode).send({ statusCode: res.statusCode, statusMessage: res.statusMessage })
+            try {
+                const authorize = await authorization(req, roles)
+                if (authorize) {
+                    if (authorize !== 401) {
+                        const snapshot = await Helpers.getAll(lottosCollectionRef) as ILottoDoc[]
+                        snapshot ? res.status(200).send(snapshot) : res.status(res.statusCode).send({ statusCode: res.statusCode, statusMessage: res.statusMessage })
+                    } else {
+                        return res.sendStatus(authorize)
+                    }
                 } else {
-                    return res.sendStatus(authorize)
+                    return res.sendStatus(401)
                 }
-            } else {
-                return res.sendStatus(401)
-            }
 
+            } catch (err: any) {
+                if (err.code === 11000) {
+                    return res.status(409).json({
+                        status: 'fail',
+                        message: 'username already exist',
+                    });
+                }
+            }
         })
     }
 
