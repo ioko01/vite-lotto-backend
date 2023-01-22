@@ -81,8 +81,9 @@ const server = async () => {
     CheckReward.updateCheckReward('/add/store', authenticate, ["ADMIN", "AGENT", "MANAGER"])
     CheckReward.deleteCheckReward('/add/store', authenticate, ["ADMIN", "AGENT", "MANAGER"])
 
-    User.getUserAll('/get/user', authenticate, ["ADMIN"])
-    User.getUserMe('/get/user', authenticate, ["ADMIN", "AGENT", "MANAGER"])
+    User.getUserAll('/get/user/all', authenticate, ["ADMIN"])
+    User.getUserMe('/get/user/me', authenticate, ["ADMIN", "AGENT", "MANAGER"])
+    User.addCredit('/add/credit', authenticate, ["ADMIN", "AGENT", "MANAGER"])
     User.addUserAdmin('/add/admin')
     User.addUserAgent('/add/agent', authenticate, ["ADMIN"])
     User.addUserManager('/add/manager', authenticate, ["ADMIN", "AGENT"])

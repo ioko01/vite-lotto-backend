@@ -53,6 +53,37 @@ export class ApiUser {
         })
     }
 
+    addCredit = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
+        APP.put(url, middleware, async (req: Request, res: Response) => {
+            try {
+                const authorize = await authorization(req, roles)
+                if (authorize) {
+                    if (authorize !== 401) {
+                        const data = req.body as IUserDoc
+                        await Helpers.update(data.id, DBUsers, { credit: data.credit } as IUser)
+                            .then(() => {
+                                res.send({ statusCode: res.statusCode, message: "OK" })
+                            })
+                            .catch(error => {
+                                res.send({ statusCode: res.statusCode, message: error })
+                            })
+                    } else {
+                        return res.sendStatus(authorize)
+                    }
+                } else {
+                    return res.sendStatus(401)
+                }
+            } catch (err: any) {
+                if (err.code === 11000) {
+                    return res.status(409).json({
+                        status: 'fail',
+                        message: 'username already exist',
+                    });
+                }
+            }
+        })
+    }
+
     addUserAdmin = (url: string) => {
         APP.post(url, async (req: Request, res: Response) => {
             try {
@@ -317,7 +348,7 @@ export class ApiUser {
 
                         users.map(async (user) => {
                             const COOKIE_NAME = process.env.COOKIE_NAME!
-                            const updateToken = { tokenVersion: user.tokenVersion } as IUser
+                            const updateToken = { tokenVersion: user.tokenVersion! + 1 } as IUser
 
                             Helpers.update(authorize.UID, DBUsers, updateToken)
                             res.clearCookie(COOKIE_NAME!, {
