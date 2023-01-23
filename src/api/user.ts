@@ -17,6 +17,23 @@ const Helpers = new HelperController()
 
 export class ApiUser {
 
+    getMe = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
+        APP.get(url, middleware, async (req: Request, res: Response) => {
+            try {
+                const authorize = await authorization(req, roles)
+                if (authorize) {
+                    if (authorize !== 401) {
+                        await Helpers.getId
+                    } else {
+                        return res.sendStatus(authorize)
+                    }
+                }
+            } catch (err: any) {
+                res.send(err)
+            }
+        })
+    }
+
     getUserMe = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
         APP.get(url, middleware, async (req: Request, res: Response) => {
             try {
@@ -59,8 +76,8 @@ export class ApiUser {
                 if (authorize) {
                     if (authorize !== 401) {
                         const data = req.body as IUserDoc
-                        const user = await Helpers.getId(doc(db, DBUsers, authorize.UID)) as IUserDoc
-                        if (user.credit - data.credit < 0) return res.sendStatus(403)
+                        const user = await Helpers.getId(doc(db, DBUsers, data.id)) as IUserDoc
+                        if (req.params.excute === "remove" && user.credit - data.credit < 0) return res.sendStatus(403)
                         let credit = 0;
                         if (req.params.excute === "add") credit = user.credit + data.credit
                         if (req.params.excute === "remove") credit = user.credit - data.credit
@@ -86,6 +103,49 @@ export class ApiUser {
                 }
             }
         })
+    }
+
+    updateStatus = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
+        APP.put(url, middleware, async (req: Request, res: Response) => {
+            try {
+                const authorize = await authorization(req, roles)
+                if (authorize) {
+                    if (authorize !== 401) {
+                        const data = req.body as IUserDoc
+                        await Helpers.update(data.id, DBUsers, { status: data.status } as IUser)
+                            .then(() => {
+                                res.send({ statusCode: res.statusCode, message: "OK" })
+                            })
+                            .catch(error => {
+                                res.send({ statusCode: res.statusCode, message: error })
+                            })
+                    } else {
+                        return res.sendStatus(authorize)
+                    }
+                } else {
+                    return res.sendStatus(401)
+                }
+            } catch (err: any) {
+                if (err.code === 11000) {
+                    return res.status(409).json({
+                        status: 'fail',
+                        message: 'username already exist',
+                    });
+                }
+            }
+        })
+    }
+
+    statusAgent = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
+        this.updateStatus(url, middleware, roles)
+    }
+
+    statusManager = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
+        this.updateStatus(url, middleware, roles)
+    }
+
+    statusMember = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
+        this.updateStatus(url, middleware, roles)
     }
 
     addUserAdmin = (url: string) => {

@@ -6,6 +6,8 @@ import { HelperController, IStoreDoc } from "../helpers/Helpers";
 import { DBStores, storesCollectionRef } from '../utils/firebase';
 import { db } from './../utils/firebase';
 import { doc, query, where } from 'firebase/firestore';
+import { GMT } from '../utils/time';
+import { IStore } from '../models/Store';
 
 const Helpers = new HelperController()
 
@@ -95,8 +97,15 @@ export class ApiStore {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        const data = req.body
-                        await Helpers.add(storesCollectionRef, data)
+                        const data = req.body as IStoreDoc
+                        const store: IStore = {
+                            img_logo: data.img_logo,
+                            name: data.name,
+                            created_at: GMT(),
+                            updated_at: GMT(),
+                            user_create_id: authorize.UID
+                        }
+                        await Helpers.add(storesCollectionRef, store)
                             .then(() => {
                                 res.send({ statusCode: res.statusCode, message: "OK" })
                             })

@@ -1,14 +1,15 @@
 import { IInitialState } from "./Main"
 import { IStore } from "./Store"
 
-export type TUserRole = "ADMIN" | "AGENT" | "MANAGER" | "MEMBER"
+export type TUserRole = "ADMIN" | "AGENT" | "MANAGER" | "MEMBER" | "MANAGE_REWARD"
 export type TUserStatus = "REGULAR" | "CLOSED" | "BANNED"
 
 export enum TUserRoleEnum {
     ADMIN = "ADMIN",
     AGENT = "AGENT",
     MANAGER = "MANAGER",
-    MEMBER = "MEMBER"
+    MEMBER = "MEMBER",
+    MANAGE_REWARD = "MANAGE_REWARD"
 }
 
 export enum TUserStatusEnum {

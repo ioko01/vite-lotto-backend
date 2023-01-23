@@ -1,4 +1,4 @@
-@auth=Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJVSUQiOiJWR1lwUFNYN3dmQWpiaURiY3pRTCIsInRva2VuVmVyc2lvbiI6Niwicm9sZSI6IkFETUlOIiwiaWF0IjoxNjc0NDU4NjU5LCJleHAiOjE2NzQ0ODAyNTl9.Jbw-VjxlYZA44JeZVcDUbOLnEz6-JLnNf12jJ9wy1lf-pThC_r9g8-No70slFJ8bjC-V00gLX5uPXpzI2QBqeJ2imI6182daxqghX6l84tHx_yj4oa0pehDu3xMJuG5StldqSDZfgVo5JMGsD_F340rJ3O3_ran2mVoEp8iMs3fVGK1_1Kgh2V5qhjuPk5facnqCwr5b3yCStpHqCXjB3yotdhJVmWiQsz05A6KYpkZ3jwBCsfCUqUhnyUVLhu_I7va1AVWlX-6m4LluWyHM9lGcuRZOGpkyJul1LFy7oSY34_0Mng9nLSCajE52maMOCT5NrJ-yfCiFjW6fSAwUcA
+@auth=Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJVSUQiOiJWR1lwUFNYN3dmQWpiaURiY3pRTCIsInRva2VuVmVyc2lvbiI6Niwicm9sZSI6IkFETUlOIiwiaWF0IjoxNjc0NDkwMjg2LCJleHAiOjE2NzQ1MTE4ODZ9.KKBe4RwBDudTLhSV0nSQtSVdNL80nRFVm9Q2EhSy7oEnj_EzJ6C70tfJJ5-HxI_UkYgwqXW8SHAxdMwkpiWDK48STdXV1UtdfiuKcCYQYDqR1oajzMGiJlu-cdlw7okhc_h9opkqa_yFIFtmMqR9JTbdNjZp8ckyptHSW-nJBacUlEmorG0rtWJZzBCofhuiAh326_Pyd69GEuH2sviN0iqpK4g05JT6ARXXi_1p238Bz3CX0JvqpUAmBzfVZGttPMjC0YxfIEFl96YHNai5IvERwaVh_QtzC9QJu5HoMh9ClC6JAB1SBjdakwBHEMkkhGDj0Rws_TLrQtlxSCH1wQ
 
 
 ###
@@ -134,19 +134,23 @@ content-type: application/json
 }
 
 ###
+GET http://localhost:8000/get/store
+Authorization: {{auth}}
+
+
+###
 POST http://localhost:8000/add/store
+Authorization: {{auth}}
 content-type: application/json
 
 {
-    "name": "ร้านมั่งมี",
-    "img_logo": "logo.jpg",
-    "created_at":"2023-01-13",
-    "updated_at":"2023-01-13",
-    "user_create_id": "1"
+    "name": "ร้านมานี",
+    "img_logo": "logo.jpg"
 }
 
 ###
-POST http://localhost:8000/add/user
+POST http://localhost:8000/add/member
+Authorization: {{auth}}
 content-type: application/json
 
 {
@@ -157,7 +161,7 @@ content-type: application/json
         "updated_at":"2023-01-13",
         "user_create_id": "1"
     },
-    "username": "test01",
+    "username": "test02",
     "password": "123456789",
     "fullname": "test",
     "credit": 0
@@ -168,13 +172,23 @@ GET http://localhost:8000/get/user/all
 Authorization: {{auth}}
 
 ###
+PUT http://localhost:8000/status/agent
+Authorization: {{auth}}
+content-type: application/json
+
+{
+    "id": "85MI669pD37GGckaKAxh",
+    "status": "REGULAR"
+}
+
+###
 PUT http://localhost:8000/add/credit
 Authorization: {{auth}}
 content-type: application/json
 
 {
-    "id": "VGYpPSX7wfAjbiDbczQL",
-    "credit": 10001
+    "id": "FHKdAOjsQz8SCtpArqKJ",
+    "credit": 50
 }
 
 ###
@@ -183,7 +197,7 @@ Authorization: {{auth}}
 content-type: application/json
 
 {
-    "id": "VGYpPSX7wfAjbiDbczQL",
-    "credit": 10001
+    "id": "FHKdAOjsQz8SCtpArqKJ",
+    "credit": 10000
 }
 
