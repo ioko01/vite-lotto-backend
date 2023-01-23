@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import { APP } from "../main";
-import { getDocs, query, where } from 'firebase/firestore';
+import { doc, getDocs, query, where } from 'firebase/firestore';
 import { validatePassword, validateUsername } from '../utils/validate';
 import { IUser, TUserRole, TUserRoleEnum } from '../models/User';
-import { DBUsers, usersCollectionRef } from '../utils/firebase';
+import { DBUsers, db, usersCollectionRef } from '../utils/firebase';
 import bcrypt from "bcrypt";
 import { GMT } from '../utils/time';
 import { createToken } from '../middleware/authenticate';
@@ -23,8 +23,7 @@ export class ApiUser {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        const snapshot = await Helpers.getAll(usersCollectionRef) as IUserDoc[]
-                        snapshot ? res.status(200).send(snapshot) : res.status(res.statusCode).send({ statusCode: res.statusCode, statusMessage: res.statusMessage })
+
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -60,7 +59,41 @@ export class ApiUser {
                 if (authorize) {
                     if (authorize !== 401) {
                         const data = req.body as IUserDoc
-                        await Helpers.update(data.id, DBUsers, { credit: data.credit } as IUser)
+                        const user = await Helpers.getId(doc(db, DBUsers, authorize.UID)) as IUserDoc
+                        await Helpers.update(data.id, DBUsers, { credit: user.credit + data.credit } as IUser)
+                            .then(() => {
+                                res.send({ statusCode: res.statusCode, message: "OK" })
+                            })
+                            .catch(error => {
+                                res.send({ statusCode: res.statusCode, message: error })
+                            })
+                    } else {
+                        return res.sendStatus(authorize)
+                    }
+                } else {
+                    return res.sendStatus(401)
+                }
+            } catch (err: any) {
+                if (err.code === 11000) {
+                    return res.status(409).json({
+                        status: 'fail',
+                        message: 'username already exist',
+                    });
+                }
+            }
+        })
+    }
+
+    removeCredit = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
+        APP.put(url, middleware, async (req: Request, res: Response) => {
+            try {
+                const authorize = await authorization(req, roles)
+                if (authorize) {
+                    if (authorize !== 401) {
+                        const data = req.body as IUserDoc
+                        const user = await Helpers.getId(doc(db, DBUsers, authorize.UID)) as IUserDoc
+                        if (user.credit - data.credit < 0) return res.sendStatus(403)
+                        await Helpers.update(data.id, DBUsers, { credit: user.credit - data.credit } as IUser)
                             .then(() => {
                                 res.send({ statusCode: res.statusCode, message: "OK" })
                             })

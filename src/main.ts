@@ -84,6 +84,7 @@ const server = async () => {
     User.getUserAll('/get/user/all', authenticate, ["ADMIN"])
     User.getUserMe('/get/user/me', authenticate, ["ADMIN", "AGENT", "MANAGER"])
     User.addCredit('/add/credit', authenticate, ["ADMIN", "AGENT", "MANAGER"])
+    User.removeCredit('/remove/credit', authenticate, ["ADMIN", "AGENT", "MANAGER"])
     User.addUserAdmin('/add/admin')
     User.addUserAgent('/add/agent', authenticate, ["ADMIN"])
     User.addUserManager('/add/manager', authenticate, ["ADMIN", "AGENT"])

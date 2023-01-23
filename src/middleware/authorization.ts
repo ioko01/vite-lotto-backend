@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request } from "express";
 import jwt_decode from "jwt-decode";
 import { IToken } from "../models/Token";
 import { TUserRole } from "../models/User";

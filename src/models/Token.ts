@@ -4,6 +4,6 @@ export interface IToken {
     UID: string
     role: TUserRole
     tokenVersion: number
-    iat: Date
-    exp: Date
+    iat: number
+    exp: number
 }
