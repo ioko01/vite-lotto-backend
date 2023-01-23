@@ -52,38 +52,6 @@ export class ApiUser {
         })
     }
 
-    addCredit = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.put(url, middleware, async (req: Request, res: Response) => {
-            try {
-                const authorize = await authorization(req, roles)
-                if (authorize) {
-                    if (authorize !== 401) {
-                        const data = req.body as IUserDoc
-                        const user = await Helpers.getId(doc(db, DBUsers, authorize.UID)) as IUserDoc
-                        await Helpers.update(data.id, DBUsers, { credit: user.credit + data.credit } as IUser)
-                            .then(() => {
-                                res.send({ statusCode: res.statusCode, message: "OK" })
-                            })
-                            .catch(error => {
-                                res.send({ statusCode: res.statusCode, message: error })
-                            })
-                    } else {
-                        return res.sendStatus(authorize)
-                    }
-                } else {
-                    return res.sendStatus(401)
-                }
-            } catch (err: any) {
-                if (err.code === 11000) {
-                    return res.status(409).json({
-                        status: 'fail',
-                        message: 'username already exist',
-                    });
-                }
-            }
-        })
-    }
-
     credit = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
         APP.put(url, middleware, async (req: Request, res: Response) => {
             try {
@@ -94,8 +62,8 @@ export class ApiUser {
                         const user = await Helpers.getId(doc(db, DBUsers, authorize.UID)) as IUserDoc
                         if (user.credit - data.credit < 0) return res.sendStatus(403)
                         let credit = 0;
-                        if (req.params.id === "add") credit = user.credit + data.credit
-                        if (req.params.id === "remove") credit = user.credit - data.credit
+                        if (req.params.excute === "add") credit = user.credit + data.credit
+                        if (req.params.excute === "remove") credit = user.credit - data.credit
                         await Helpers.update(data.id, DBUsers, { credit } as IUser)
                             .then(() => {
                                 res.send({ statusCode: res.statusCode, message: "OK" })
