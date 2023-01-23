@@ -84,7 +84,7 @@ export class ApiUser {
         })
     }
 
-    removeCredit = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
+    credit = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
         APP.put(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
@@ -93,7 +93,10 @@ export class ApiUser {
                         const data = req.body as IUserDoc
                         const user = await Helpers.getId(doc(db, DBUsers, authorize.UID)) as IUserDoc
                         if (user.credit - data.credit < 0) return res.sendStatus(403)
-                        await Helpers.update(data.id, DBUsers, { credit: user.credit - data.credit } as IUser)
+                        let credit = 0;
+                        if (req.params.id === "add") credit = user.credit + data.credit
+                        if (req.params.id === "remove") credit = user.credit - data.credit
+                        await Helpers.update(data.id, DBUsers, { credit } as IUser)
                             .then(() => {
                                 res.send({ statusCode: res.statusCode, message: "OK" })
                             })
