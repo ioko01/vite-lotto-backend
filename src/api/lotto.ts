@@ -46,9 +46,10 @@ export class ApiLotto {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        const q = query(lottosCollectionRef, where("user_create_id", "==", authorize.UID))
+                        const q = query(lottosCollectionRef, where("user_create_id", "==", authorize.id))
                         const snapshot = await Helpers.getContain(q) as ILottoDoc[]
-                        snapshot ? res.status(200).send(snapshot) : res.status(res.statusCode).send({ statusCode: res.statusCode, statusMessage: res.statusMessage })
+                        if (!snapshot) return res.sendStatus(403)
+                        return res.json(snapshot)
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -74,7 +75,8 @@ export class ApiLotto {
                 if (authorize) {
                     if (authorize !== 401) {
                         const snapshot = await Helpers.getAll(lottosCollectionRef) as ILottoDoc[]
-                        snapshot ? res.status(200).send(snapshot) : res.status(res.statusCode).send({ statusCode: res.statusCode, statusMessage: res.statusMessage })
+                        if (!snapshot) return res.sendStatus(403)
+                        return res.json(snapshot)
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -109,7 +111,7 @@ export class ApiLotto {
                             status: data.status,
                             created_at: GMT(),
                             updated_at: GMT(),
-                            user_create_id: authorize.UID
+                            user_create_id: authorize.id
                         }
 
                         await Helpers.add(lottosCollectionRef, lotto)

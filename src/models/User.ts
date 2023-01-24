@@ -19,7 +19,7 @@ export enum TUserStatusEnum {
 }
 
 export interface IUser extends IInitialState {
-    store?: IStore
+    store_id?: string
     username: string
     password: string
     fullname: string

@@ -3,22 +3,39 @@ import { APP } from "../main";
 import { TUserRole } from "../models/User";
 import { authorization } from "../middleware/authorization";
 import { HelperController, IRateDoc } from "../helpers/Helpers";
-import { DBRates, db, ratesCollectionRef } from './../utils/firebase';
-import { doc, query, where } from 'firebase/firestore';
+import { DBLottos, DBRates, DBStores, db, ratesCollectionRef } from './../utils/firebase';
+import { DocumentData, Query, doc, documentId, query, where } from 'firebase/firestore';
+import { IRate } from '../models/Rate';
+import { GMT } from '../utils/time';
 
 const Helpers = new HelperController()
 
 export class ApiRate {
-    getRateId = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
+    getRateAllMe = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
         APP.get(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        const id = req.params as { id: string }
-                        const bill = await Helpers.getId(doc(db, DBRates, id.id))
-                        if (!bill) return res.sendStatus(404)
-                        return res.json(bill)
+                        const { id } = req.params as { id: string }
+                        let q: Query<DocumentData> | undefined = undefined
+                        if (authorize.role === "ADMIN") {
+                            q = query(ratesCollectionRef, where(documentId(), "==", id))
+                        } else if (authorize.role === "AGENT") {
+                            q = query(ratesCollectionRef, where("user_create_id", "==", authorize.id), where(documentId(), "==", id))
+                        } else if (authorize.role === "MANAGER") {
+                            q = query(ratesCollectionRef, where("user_create_id", "==", authorize.agent_create_id), where(documentId(), "==", id))
+                        }
+
+                        if (!q) return res.sendStatus(403)
+
+                        const getStore = await Helpers.getContain(q)
+                        if (getStore.length > 0) {
+                            const rate = await Helpers.getId(doc(db, DBRates, id))
+                            if (!rate) return res.sendStatus(404)
+                            return res.json(rate)
+                        }
+                        return res.sendStatus(403)
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -43,9 +60,10 @@ export class ApiRate {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        const q = query(ratesCollectionRef, where("user_create_id", "==", authorize.UID))
+                        const q = query(ratesCollectionRef, where("user_create_id", "==", authorize.agent_create_id))
                         const snapshot = await Helpers.getContain(q) as IRateDoc[]
-                        snapshot ? res.status(200).send(snapshot) : res.status(res.statusCode).send({ statusCode: res.statusCode, statusMessage: res.statusMessage })
+                        if (!snapshot) return res.sendStatus(403)
+                        return res.json(snapshot)
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -69,8 +87,7 @@ export class ApiRate {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        const snapshot = await Helpers.getAll(ratesCollectionRef)
-                        snapshot ? res.status(200).send(snapshot) : res.status(res.statusCode).send({ statusCode: res.statusCode, statusMessage: res.statusMessage })
+
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -94,14 +111,38 @@ export class ApiRate {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        const data = req.body
-                        await Helpers.add(ratesCollectionRef, data)
-                            .then(() => {
-                                res.send({ statusCode: res.statusCode, message: "OK" })
-                            })
-                            .catch(error => {
-                                res.send({ statusCode: res.statusCode, message: error })
-                            })
+                        if (authorize.role === "AGENT") {
+                            const data = req.body as IRate
+                            const lotto = await Helpers.getId(doc(db, DBLottos, data.lotto_id))
+                            const store = await Helpers.getId(doc(db, DBStores, data.store_id))
+                            if (!lotto) return res.status(400).json({ message: "No Lotto" })
+                            if (!store) return res.status(400).json({ message: "No Store" })
+                            const q = query(ratesCollectionRef, where("store_id", "==", data.store_id), where("lotto_id", "==", data.lotto_id))
+                            const checkRate = await Helpers.getContain(q)
+                            if (checkRate.length > 0) return res.status(400).json({ message: "this rate has been used" })
+                            const rate: IRate = {
+                                bet_one_digits: data.bet_one_digits,
+                                bet_two_digits: data.bet_two_digits,
+                                bet_three_digits: data.bet_three_digits,
+                                one_digits: data.one_digits,
+                                two_digits: data.two_digits,
+                                three_digits: data.three_digits,
+                                store_id: data.store_id,
+                                lotto_id: data.lotto_id,
+                                admin_create_id: authorize.admin_create_id,
+                                created_at: GMT(),
+                                updated_at: GMT(),
+                                user_create_id: authorize.id,
+                                committion: data.committion
+                            }
+                            await Helpers.add(ratesCollectionRef, rate)
+                                .then(() => {
+                                    return res.send({ statusCode: res.statusCode, message: "OK" })
+                                })
+                                .catch(error => {
+                                    return res.send({ statusCode: res.statusCode, message: error })
+                                })
+                        }
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -120,14 +161,7 @@ export class ApiRate {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        const data = req.body
-                        await Helpers.update("1", DBRates, data)
-                            .then(() => {
-                                res.send({ statusCode: res.statusCode, message: "OK" })
-                            })
-                            .catch(error => {
-                                res.send({ statusCode: res.statusCode, message: error })
-                            })
+
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -147,15 +181,7 @@ export class ApiRate {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        const data = req.body as { id: string }
-                        await Helpers.delete(data.id, DBRates)
-                            .then((data) => {
-                                if (data === 404) return res.sendStatus(data)
-                                return res.send({ statusCode: res.statusCode, message: "OK" })
-                            })
-                            .catch(error => {
-                                return res.send({ statusCode: res.statusCode, message: error })
-                            })
+
                     } else {
                         return res.sendStatus(authorize)
                     }

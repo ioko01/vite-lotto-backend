@@ -41,3 +41,6 @@ export const digitsCloseCollectionRef = collection(db, DBDigitsClose)
 
 export const DBCheckRewards = "check_rewards"
 export const checkRewardsCollectionRef = collection(db, DBCheckRewards)
+
+export const DBCommittions = "committions"
+export const committionsCollectionRef = collection(db, DBCommittions)

@@ -1,4 +1,4 @@
-@auth=Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJVSUQiOiJWR1lwUFNYN3dmQWpiaURiY3pRTCIsInRva2VuVmVyc2lvbiI6Niwicm9sZSI6IkFETUlOIiwiaWF0IjoxNjc0NDkwMjg2LCJleHAiOjE2NzQ1MTE4ODZ9.KKBe4RwBDudTLhSV0nSQtSVdNL80nRFVm9Q2EhSy7oEnj_EzJ6C70tfJJ5-HxI_UkYgwqXW8SHAxdMwkpiWDK48STdXV1UtdfiuKcCYQYDqR1oajzMGiJlu-cdlw7okhc_h9opkqa_yFIFtmMqR9JTbdNjZp8ckyptHSW-nJBacUlEmorG0rtWJZzBCofhuiAh326_Pyd69GEuH2sviN0iqpK4g05JT6ARXXi_1p238Bz3CX0JvqpUAmBzfVZGttPMjC0YxfIEFl96YHNai5IvERwaVh_QtzC9QJu5HoMh9ClC6JAB1SBjdakwBHEMkkhGDj0Rws_TLrQtlxSCH1wQ
+@auth=Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJVSUQiOiJKQlptblBVRENBMEdTT0IxMEhwTyIsInRva2VuVmVyc2lvbiI6MSwicm9sZSI6Ik1FTUJFUiIsImlhdCI6MTY3NDU1MDc2MywiZXhwIjoxNjc0NTcyMzYzfQ.XXWs91cLnq8lAWuRJO47sSwoFmVH1fYPiXhK-t8OpmF-s9hIj682mr6iI4ZT5xD1UuSYh1nM3cNaP4r1rkD_P1dizVfqtAeiP_KixB2ekQpfjaIP2owwCcyx3ZJF7NSS1jyEv3iKeVv4XlJBOqjn0O2Mi82l_ecaOzRop-vP2kGsta9G5rEE0DnFZXCYGOKrUIR0h0QuYoX4o1XiUy4MA1LKDSVqxI7KlPxHQ7ilLIG37jfhviSU-Hpv1p6zQKXouBVDI1R5El5GEGdNPx2e0_-kitkqBP1LUmgmMgRFZZUz2ykJkmBLHyOmNH0ycKXRWYApnydznLJdPTa2xh1F_A
 
 
 ###
@@ -29,7 +29,7 @@ Authorization: {{auth}}
 Content-Type: application/json
 
 {
-    "username": "test01",
+    "username": "manager01",
     "password": "123456789"
 }
 
@@ -42,87 +42,7 @@ Content-Type: application/json
     "id": "ukRnArzUqFkBoL043v09"
 }
 
-###
-POST http://localhost:8000/add/bill
-Authorization: {{auth}}
-content-type: application/json
 
-{
-    "store": {
-            "name": "ร้านมั่งมี",
-            "img_logo": "logo.jpg"
-        },
-        "lotto": {
-            "name": "ดาวน์โจนส์ VIP",
-            "img_flag": "jones.jpg",
-            "open": "2023-01-13",
-            "close": "2023-01-13",
-            "report": "2023-01-13",
-            "status": "OPEN"
-        },
-        "rate": {
-            "store": {
-                "name": "ร้านมั่งมี",
-                "img_logo": "logo.jpg"
-            },
-            "lotto": {
-                "name": "ดาวน์โจนส์ VIP",
-                "img_flag": "jones.jpg",
-                "open": "2023-01-13",
-                "close": "2023-01-13",
-                "report": "2023-01-13",
-                "status": "OPEN"
-            },
-            "one_digits": {
-                "top": "3",
-                "bottom": "4"
-            },
-            "two_digits": {
-                "top": "95",
-                "bottom": "95"
-            },
-            "three_digits": {
-                "top": "800",
-                "toad": "125"
-            },
-            "bet_one_digits": {
-                "top": "1:10000:100000",
-                "bottom": "1:10000:100000"
-            },
-            "bet_two_digits": {
-                "top": "1:10000:100000",
-                "bottom": "1:10000:100000"
-            },
-            "bet_three_digits": {
-                "top": "1:10000:100000",
-                "bottom": "1:10000:100000"
-            }
-        },
-        "one_digits": [],
-        "two_digits": ["12:5:5", "21:5:5"],
-        "three_digits": [],
-        "reward": [],
-        "times": "2023-01-13",
-        "note": "asd"
-}
-
-###
-GET http://localhost:8000/get/lotto/all
-Authorization: {{auth}}
-
-###
-POST http://localhost:8000/add/lotto
-Authorization: {{auth}}
-content-type: application/json
-
-{
-    "name": "ลาว VIP",
-    "img_flag": "jone.jpg",
-    "open": "2023-01-19",
-    "close": "2023-01-19",
-    "report": "2023-01-19",
-    "status": "OPEN"
-}
 
 ###
 DELETE  http://localhost:8000/delete/lotto
@@ -134,9 +54,45 @@ content-type: application/json
 }
 
 ###
-GET http://localhost:8000/get/store
+POST http://localhost:8000/add/admin
+content-type: application/json
+
+{
+    "username": "admin01",
+    "password": "123456789",
+    "fullname": "admin",
+    "credit": 0
+}
+
+###
+POST http://localhost:8000/add/lotto
+Authorization: {{auth}}
+content-type: application/json
+
+{
+    "name": "ดาวน์โจนส์ VIP",
+    "img_flag": "jone.jpg",
+    "open": "2023-01-19 06.00",
+    "close": "2023-01-19 00.10",
+    "report": "2023-01-19 00.30",
+    "status": "OPEN"
+}
+
+###
+GET http://localhost:8000/get/lotto/all
 Authorization: {{auth}}
 
+###
+POST http://localhost:8000/add/agent
+Authorization: {{auth}}
+content-type: application/json
+
+{
+    "username": "agent01",
+    "password": "123456789",
+    "fullname": "agent",
+    "credit": 0
+}
 
 ###
 POST http://localhost:8000/add/store
@@ -144,8 +100,99 @@ Authorization: {{auth}}
 content-type: application/json
 
 {
-    "name": "ร้านมานี",
+    "name": "ร้านมั่นใจ",
     "img_logo": "logo.jpg"
+}
+
+###
+GET http://localhost:8000/get/store/me
+Authorization: {{auth}}
+
+###
+GET http://localhost:8000/get/store/me/U5D7nSeVqplRp8DQi1EG
+Authorization: {{auth}}
+
+###
+GET http://localhost:8000/get/rate/id/E7mvd16zIlTw6ODBDkku
+Authorization: {{auth}}
+
+###
+GET http://localhost:8000/get/rate/me
+Authorization: {{auth}}
+
+###
+POST http://localhost:8000/add/rate
+Authorization: {{auth}}
+content-type: application/json
+
+{
+    "store_id":"U5D7nSeVqplRp8DQi1EG",
+    "lotto_id": "mEJ1muKa4K0aZbPBlgE4",
+    "one_digits": {
+        "top": "3",
+        "bottom": "4"
+    },
+    "two_digits": {
+        "top": "95",
+        "bottom": "95"
+    },
+    "three_digits": {
+        "top": "800",
+        "toad": "125"
+    },
+    "bet_one_digits": {
+        "top": "1:10000:100000",
+        "bottom": "1:10000:100000"
+    },
+    "bet_two_digits": {
+        "top": "1:10000:100000",
+        "bottom": "1:10000:100000"
+    },
+    "bet_three_digits": {
+        "top": "1:10000:100000",
+        "bottom": "1:10000:100000"
+    },
+    "committion": {
+        "one_digits": {
+            "top": "1",
+            "bottom": "1"
+        },
+        "two_digits": {
+            "top": "1",
+            "bottom": "1"
+        },
+        "three_digits": {
+            "top": "3",
+            "toad": "3"
+        }
+    }
+}
+
+###
+POST http://localhost:8000/add/manager
+Authorization: {{auth}}
+content-type: application/json
+
+{
+    "store_id": "U5D7nSeVqplRp8DQi1EG",
+    "username": "manager01",
+    "password": "123456789",
+    "fullname": "manager",
+    "credit": 0
+}
+
+###
+GET http://localhost:8000/get/user/me
+Authorization: {{auth}}
+
+###
+PUT http://localhost:8000/add/credit
+Authorization: {{auth}}
+content-type: application/json
+
+{
+    "id": "v9pqnOj3aH7WqXnxerjU",
+    "credit": 10000
 }
 
 ###
@@ -154,31 +201,11 @@ Authorization: {{auth}}
 content-type: application/json
 
 {
-    "store":{
-        "name": "ร้านมั่งมี",
-        "img_logo": "logo.jpg",
-        "created_at":"2023-01-13",
-        "updated_at":"2023-01-13",
-        "user_create_id": "1"
-    },
-    "username": "test02",
+    "store_id": "U5D7nSeVqplRp8DQi1EG",
+    "username": "test01",
     "password": "123456789",
-    "fullname": "test",
+    "fullname": "test01",
     "credit": 0
-}
-
-###
-GET http://localhost:8000/get/user/all
-Authorization: {{auth}}
-
-###
-PUT http://localhost:8000/status/agent
-Authorization: {{auth}}
-content-type: application/json
-
-{
-    "id": "85MI669pD37GGckaKAxh",
-    "status": "REGULAR"
 }
 
 ###
@@ -187,8 +214,25 @@ Authorization: {{auth}}
 content-type: application/json
 
 {
-    "id": "FHKdAOjsQz8SCtpArqKJ",
-    "credit": 50
+    "id": "JBZmnPUDCA0GSOB10HpO",
+    "credit": 2000
+}
+
+###
+POST http://localhost:8000/add/bill
+Authorization: {{auth}}
+content-type: application/json
+
+{
+    "store_id": "U5D7nSeVqplRp8DQi1EG",
+    "lotto_id": "mEJ1muKa4K0aZbPBlgE4",
+    "rate_id": "89MtzfwhL0UzkvZlxLQe",
+    "one_digits": [],
+    "two_digits": ["12:5:5", "21:5:5"],
+    "three_digits": [],
+    "reward": [],
+    "times": "2023-01-13",
+    "note": "asd"
 }
 
 ###
@@ -200,4 +244,20 @@ content-type: application/json
     "id": "FHKdAOjsQz8SCtpArqKJ",
     "credit": 10000
 }
+
+###
+GET http://localhost:8000/get/user/all
+Authorization: {{auth}}
+
+###
+PUT http://localhost:8000/update/status/agent
+Authorization: {{auth}}
+content-type: application/json
+
+{
+    "id": "85MI669pD37GGckaKAxh",
+    "status": "REGULAR"
+}
+
+
 

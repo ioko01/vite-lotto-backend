@@ -5,22 +5,25 @@ import { authorization } from "../middleware/authorization";
 import { HelperController, IStoreDoc } from "../helpers/Helpers";
 import { DBStores, storesCollectionRef } from '../utils/firebase';
 import { db } from './../utils/firebase';
-import { doc, query, where } from 'firebase/firestore';
+import { doc, documentId, query, where } from 'firebase/firestore';
 import { GMT } from '../utils/time';
 import { IStore } from '../models/Store';
 
 const Helpers = new HelperController()
 
 export class ApiStore {
-    getStoreId = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
+    getStoreAllMe = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
         APP.get(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        const id = req.params as { id: string }
-                        const bill = await Helpers.getId(doc(db, DBStores, id.id))
-                        if (!bill) return res.sendStatus(404)
+                        const { id } = req.params as { id: string }
+                        console.log(id, authorize.id);
+                        const q = query(storesCollectionRef, where("user_create_id", "==", authorize.id), where(documentId(), "==", id))
+
+                        const bill = await Helpers.getContain(q)
+                        if (bill.length === 0) return res.sendStatus(403)
                         return res.json(bill)
                     } else {
                         return res.sendStatus(authorize)
@@ -46,9 +49,10 @@ export class ApiStore {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        const q = query(storesCollectionRef, where("user_create_id", "==", authorize.UID))
+                        const q = query(storesCollectionRef, where("user_create_id", "==", authorize.id))
                         const snapshot = await Helpers.getContain(q) as IStoreDoc[]
-                        snapshot ? res.status(200).send(snapshot) : res.status(res.statusCode).send({ statusCode: res.statusCode, statusMessage: res.statusMessage })
+                        if (!snapshot) return res.sendStatus(403)
+                        return res.json(snapshot)
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -98,13 +102,18 @@ export class ApiStore {
                 if (authorize) {
                     if (authorize !== 401) {
                         const data = req.body as IStoreDoc
+                        const q = query(storesCollectionRef, where("name", "==", data.name))
+                        const isStore = await Helpers.getContain(q)
+                        if (isStore.length > 0) return res.status(400).json({ message: "this store has been used" })
+                        
                         const store: IStore = {
                             img_logo: data.img_logo,
                             name: data.name,
                             created_at: GMT(),
                             updated_at: GMT(),
-                            user_create_id: authorize.UID
+                            user_create_id: authorize.id
                         }
+
                         await Helpers.add(storesCollectionRef, store)
                             .then(() => {
                                 res.send({ statusCode: res.statusCode, message: "OK" })
