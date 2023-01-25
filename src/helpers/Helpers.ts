@@ -82,7 +82,7 @@ export class HelperController {
 
     delete = async (id: string, dbname: string) => {
         const data = await this.getId(doc(db, dbname, id)) as IBillDoc | IStoreDoc | IUserDoc | ILottoDoc | IRateDoc | IDigitSemiDoc | IDigitCloseDoc | ICheckRewardDoc | ICommittionDoc
-        if (!data) return 404
+        if (!data) return 400
 
         const isDoc = doc(db, dbname, id)
         return await deleteDoc(isDoc)

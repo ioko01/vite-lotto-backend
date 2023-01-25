@@ -64,9 +64,9 @@ export class ApiBill {
                 if (authorize) {
                     if (authorize !== 401) {
                         const q = query(billsCollectionRef, where("user_create_id", "==", authorize.id))
-                        const snapshot = await Helpers.getContain(q) as IBillDoc[]
-                        if (!snapshot) return res.sendStatus(403)
-                        return res.json(snapshot)
+                        const bill = await Helpers.getContain(q) as IBillDoc[]
+                        if (!bill) return res.status(400).json({ message: "don't have bill" })
+                        return res.json(bill)
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -91,9 +91,9 @@ export class ApiBill {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        const snapshot = await Helpers.getAll(billsCollectionRef) as IBillDoc[]
-                        if (!snapshot) return res.sendStatus(403)
-                        return res.json(snapshot)
+                        const bill = await Helpers.getAll(billsCollectionRef) as IBillDoc[]
+                        if (!bill) return res.status(400).json({ message: "don't have bill" })
+                        return res.json(bill)
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -110,6 +110,39 @@ export class ApiBill {
                 }
             }
         })
+    }
+
+    calculatePrice = (one_digits: string[], two_digits: string[], three_digits: string[]) => {
+        let one_price_array: number[] = []
+        let total: number[] = []
+        one_digits?.map(digit => {
+            const top = digit.split(":")[1]
+            const bottom = digit.split(":")[2]
+            one_price_array.push(parseInt(top))
+            one_price_array.push(parseInt(bottom))
+        })
+        total.push(one_price_array.reduce((price, current) => price + current, 0))
+
+        let two_price_array: number[] = []
+        two_digits?.map(digit => {
+            const top = digit.split(":")[1]
+            const bottom = digit.split(":")[2]
+            two_price_array.push(parseInt(top))
+            two_price_array.push(parseInt(bottom))
+        })
+        total.push(two_price_array.reduce((price, current) => price + current, 0))
+
+        let three_price_array: number[] = []
+        three_digits?.map(digit => {
+            const top = digit.split(":")[1]
+            const bottom = digit.split(":")[2]
+            three_price_array.push(parseInt(top))
+            three_price_array.push(parseInt(bottom))
+        })
+        total.push(three_price_array.reduce((price, current) => price + current, 0))
+
+        const price = total.reduce((price, current) => price + current, 0)
+        return price
     }
 
     addBill = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
@@ -136,15 +169,22 @@ export class ApiBill {
                             updated_at: GMT(),
                             user_create_id: authorize.id
                         }
-                        
-                        await Helpers.add(billsCollectionRef, bill)
-                            .then(() => {
 
-                                await Helpers.update(authorize.id, DBUsers, { credit: })
-                                res.send({ statusCode: res.statusCode, message: "OK" })
+                        const price = this.calculatePrice(data.one_digits!, data.two_digits!, data.three_digits!)
+
+                        await Helpers.add(billsCollectionRef, bill)
+                            .then(async () => {
+                                if (authorize.credit < price) return res.status(400).json({ message: "no credit" })
+                                await Helpers.update(authorize.id, DBUsers, { credit: authorize.credit - price })
+                                    .then(() => {
+                                        res.send({ statusCode: res.statusCode, message: "OK" })
+                                    })
+                                    .catch(() => {
+                                        return res.status(400).json({ message: "update credit unsuccessfully" })
+                                    })
                             })
-                            .catch(error => {
-                                res.send({ statusCode: res.statusCode, message: error })
+                            .catch(() => {
+                                return res.status(400).json({ message: "add bill unsuccessfully" })
                             })
                     } else {
                         return res.sendStatus(authorize)
@@ -159,38 +199,54 @@ export class ApiBill {
         })
     }
 
-    updateBill = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.put(url, middleware, async (req: Request, res: Response) => {
-            try {
-                const data = req.body
-                await Helpers.update("1", DBBills, data)
-                    .then(() => {
-                        res.send({ statusCode: res.statusCode, message: "OK" })
-                    })
-                    .catch(error => {
-                        res.send({ statusCode: res.statusCode, message: error })
-                    })
-            } catch (error) {
-                res.status(res.statusCode).send(error);
-            }
+    // updateBill = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
+    //     APP.put(url, middleware, async (req: Request, res: Response) => {
+    //         try {
+    //             const data = req.body
+    //             await Helpers.update("1", DBBills, data)
+    //                 .then(() => {
+    //                     res.send({ statusCode: res.statusCode, message: "OK" })
+    //                 })
+    //                 .catch(error => {
+    //                     res.send({ statusCode: res.statusCode, message: error })
+    //                 })
+    //         } catch (error) {
+    //             res.status(res.statusCode).send(error);
+    //         }
 
-        })
-    }
+    //     })
+    // }
 
     deleteBill = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.delete(url, middleware, async (req: Request, res: Response) => {
+        APP.put(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
                         const data = req.body as { id: string }
-                        await Helpers.delete(data.id, DBBills)
-                            .then((data) => {
-                                if (data === 404) return res.sendStatus(data)
-                                return res.send({ statusCode: res.statusCode, message: "OK" })
+                        const q = query(billsCollectionRef, where("user_create_id", "==", authorize.id), where(documentId(), "==", data.id))
+                        const isBillMe = await Helpers.getContain(q) as IBillDoc[]
+                        if (isBillMe.length <= 0) return res.sendStatus(403)
+
+                        const [price] = isBillMe.map(bill => {
+                            if (bill.status === "CANCEL" || bill.status === "REWARD") return false
+                            const price = this.calculatePrice(bill.one_digits!, bill.two_digits!, bill.three_digits!)
+                            return price
+                        })
+
+                        if (!price) return res.status(400).json({ message: "can not delete bill" })
+                        await Helpers.update(data.id, DBBills, { status: "CANCEL" })
+                            .then(async () => {
+                                await Helpers.update(authorize.id, DBUsers, { credit: authorize.credit + price })
+                                    .then(() => {
+                                        res.send({ statusCode: res.statusCode, message: "OK" })
+                                    })
+                                    .catch(() => {
+                                        return res.status(400).json({ message: "update credit unsuccessfully" })
+                                    })
                             })
                             .catch(error => {
-                                return res.send({ statusCode: res.statusCode, message: error })
+                                return res.status(400).json({ message: "delete bill unsuccessfully" })
                             })
                     } else {
                         return res.sendStatus(authorize)

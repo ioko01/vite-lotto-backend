@@ -1,0 +1,44 @@
+@auth=Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJVSUQiOiJKQlptblBVRENBMEdTT0IxMEhwTyIsInRva2VuVmVyc2lvbiI6MSwicm9sZSI6Ik1FTUJFUiIsImlhdCI6MTY3NDYyMDA4NiwiZXhwIjoxNjc0NjQxNjg2fQ.xSlhrCnyHrhS6B3mAcOtBCSaZNwfkNd2jWlbZG6Q3YFqSn51h7wkC2meVcIAlegDtyHTToTVneswOqcYV04i16WRwThhWJ0IvrTtiksTvLuPqq2yayoIRUc3HJLVarnJKpDADUzT3MS9inEm314uvWOijOn7yxtvegEVmlqc0ThL1Noqsj-nxiq1aQ7gqiseknipln47LhzCD5haKF7dph_6RX61yQ1ylrA08GKmHhzaYebJFgZx0aA1FWCvGujDSLb5e05JljLKcMBL1qV2OROT3TQBg8apaZdyCW1xhOmSLwFw2Uc_ek1Q7Sf7UD5bnFttH9-XkHVsioV1v46RkQ
+
+###
+POST http://localhost:8000/auth/login
+Content-Type: application/json
+
+{
+    "username": "test01",
+    "password": "123456789"
+}
+
+###
+GET http://localhost:8000/me
+Authorization: {{auth}}
+
+###
+GET http://localhost:8000/get/bill/me
+Authorization: {{auth}}
+
+###
+POST http://localhost:8000/add/bill
+Authorization: {{auth}}
+content-type: application/json
+
+{
+    "store_id": "U5D7nSeVqplRp8DQi1EG",
+    "lotto_id": "mEJ1muKa4K0aZbPBlgE4",
+    "rate_id": "89MtzfwhL0UzkvZlxLQe",
+    "one_digits": [],
+    "two_digits": [],
+    "three_digits": ["123:50:50"],
+    "reward": [],
+    "times": "2023-01-13",
+    "note": "asd"
+}
+
+###
+PUT http://localhost:8000/delete/bill
+Authorization: {{auth}}
+content-type: application/json
+
+{
+    "id": "GRnnsgQ1oQwR8hN8Xm32"
+}

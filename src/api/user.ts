@@ -23,7 +23,9 @@ export class ApiUser {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-
+                        const isMe = await Helpers.getId(doc(db, DBUsers, authorize.id))
+                        if (!isMe) return res.status(400).json({ message: "don't have user" })
+                        return res.json(isMe)
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -40,7 +42,6 @@ export class ApiUser {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        const { id } = req.params as { id: string }
                         let q: Query<DocumentData> | undefined = undefined
                         if (authorize.role === "ADMIN") {
                             q = query(usersCollectionRef, where("1", "==", "1"))
@@ -71,9 +72,9 @@ export class ApiUser {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        const snapshot = await Helpers.getAll(usersCollectionRef) as IUserDoc[]
-                        if (!snapshot) return res.sendStatus(403)
-                        return res.json(snapshot)
+                        const user = await Helpers.getAll(usersCollectionRef) as IUserDoc[]
+                        if (!user) return res.status(400).json({ message: "don't have user" })
+                        return res.json(user)
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -482,7 +483,7 @@ export class ApiUser {
                         const data = req.body as IUserDoc
                         const q = query(usersCollectionRef, where("admin_create_id", "==", authorize.id), where(documentId(), "==", data.id))
                         const isUserMe = await Helpers.getContain(q)
-                        if (!isUserMe) return res.sendStatus(403)
+                        if (!isUserMe) return res.status(400).json({ message: "don't have user" })
 
                         const closedUser = { status: "CLOSED" } as IUser
 
@@ -490,8 +491,8 @@ export class ApiUser {
                             .then(async () => {
                                 return res.sendStatus(200)
                             })
-                            .catch(error => {
-                                return res.send({ statusCode: res.statusCode, message: error })
+                            .catch(() => {
+                                return res.status(400).json({ message: "delete agent unsuccessfully" })
                             })
 
                     } else {
@@ -526,8 +527,8 @@ export class ApiUser {
                             .then(async () => {
                                 return res.sendStatus(200)
                             })
-                            .catch(error => {
-                                return res.send({ statusCode: res.statusCode, message: error })
+                            .catch(() => {
+                                return res.status(400).json({ message: "delete manager unsuccessfully" })
                             })
                     } else {
                         return res.sendStatus(authorize)
@@ -571,8 +572,8 @@ export class ApiUser {
                             .then(async () => {
                                 return res.sendStatus(200)
                             })
-                            .catch(error => {
-                                return res.send({ statusCode: res.statusCode, message: error })
+                            .catch(() => {
+                                return res.status(400).json({ message: "delete member unsuccessfully" })
                             })
 
                     } else {

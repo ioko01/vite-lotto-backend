@@ -3,10 +3,6 @@ import { APP } from "../main";
 import { TUserRole } from "../models/User";
 import { authorization } from "../middleware/authorization";
 import { HelperController } from "../helpers/Helpers";
-import { DBCheckRewards, db } from '../utils/firebase';
-import { doc, query, where } from 'firebase/firestore';
-import { ICheckReward } from '../models/CheckReward';
-import { checkRewardsCollectionRef } from './../utils/firebase';
 
 const Helpers = new HelperController()
 

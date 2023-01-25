@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { APP } from "../main";
 import { TUserRole } from "../models/User";
 import { authorization } from "../middleware/authorization";
-import { HelperController, IRateDoc } from "../helpers/Helpers";
+import { HelperController, IRateDoc, IStoreDoc } from "../helpers/Helpers";
 import { DBLottos, DBRates, DBStores, db, ratesCollectionRef } from './../utils/firebase';
 import { DocumentData, Query, doc, documentId, query, where } from 'firebase/firestore';
 import { IRate } from '../models/Rate';
@@ -29,16 +29,15 @@ export class ApiRate {
 
                         if (!q) return res.sendStatus(403)
 
-                        const getStore = await Helpers.getContain(q)
+                        const getStore = await Helpers.getContain(q) as IStoreDoc[]
                         if (getStore.length > 0) {
                             const rate = await Helpers.getId(doc(db, DBRates, id))
                             if (!rate) return res.sendStatus(404)
                             return res.json(rate)
                         }
-                        return res.sendStatus(403)
-                    } else {
-                        return res.sendStatus(authorize)
+                        return res.status(400).json({ message: "don't have rate" })
                     }
+                    return res.sendStatus(authorize)
                 } else {
                     return res.sendStatus(401)
                 }
@@ -61,9 +60,9 @@ export class ApiRate {
                 if (authorize) {
                     if (authorize !== 401) {
                         const q = query(ratesCollectionRef, where("user_create_id", "==", authorize.agent_create_id))
-                        const snapshot = await Helpers.getContain(q) as IRateDoc[]
-                        if (!snapshot) return res.sendStatus(403)
-                        return res.json(snapshot)
+                        const rate = await Helpers.getContain(q) as IRateDoc[]
+                        if (!rate) return res.status(400).json({ message: "don't have rate" })
+                        return res.json(rate)
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -115,8 +114,8 @@ export class ApiRate {
                             const data = req.body as IRate
                             const lotto = await Helpers.getId(doc(db, DBLottos, data.lotto_id))
                             const store = await Helpers.getId(doc(db, DBStores, data.store_id))
-                            if (!lotto) return res.status(400).json({ message: "No Lotto" })
-                            if (!store) return res.status(400).json({ message: "No Store" })
+                            if (!lotto) return res.status(400).json({ message: "don't have lotto" })
+                            if (!store) return res.status(400).json({ message: "don't have store" })
                             const q = query(ratesCollectionRef, where("store_id", "==", data.store_id), where("lotto_id", "==", data.lotto_id))
                             const checkRate = await Helpers.getContain(q)
                             if (checkRate.length > 0) return res.status(400).json({ message: "this rate has been used" })

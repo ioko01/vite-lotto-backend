@@ -50,9 +50,9 @@ export class ApiStore {
                 if (authorize) {
                     if (authorize !== 401) {
                         const q = query(storesCollectionRef, where("user_create_id", "==", authorize.id))
-                        const snapshot = await Helpers.getContain(q) as IStoreDoc[]
-                        if (!snapshot) return res.sendStatus(403)
-                        return res.json(snapshot)
+                        const store = await Helpers.getContain(q) as IStoreDoc[]
+                        if (!store) return res.status(400).json({ message: "don't have store" })
+                        return res.json(store)
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -76,8 +76,9 @@ export class ApiStore {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        const snapshot = await Helpers.getAll(storesCollectionRef)
-                        snapshot ? res.status(200).send(snapshot) : res.status(res.statusCode).send({ statusCode: res.statusCode, statusMessage: res.statusMessage })
+                        const store = await Helpers.getAll(storesCollectionRef)
+                        if (!store) return res.status(400).json({ message: "don't have store" })
+                        return res.json(store)
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -105,7 +106,7 @@ export class ApiStore {
                         const q = query(storesCollectionRef, where("name", "==", data.name))
                         const isStore = await Helpers.getContain(q)
                         if (isStore.length > 0) return res.status(400).json({ message: "this store has been used" })
-                        
+
                         const store: IStore = {
                             img_logo: data.img_logo,
                             name: data.name,
@@ -169,7 +170,7 @@ export class ApiStore {
                         const data = req.body as { id: string }
                         await Helpers.delete(data.id, DBStores)
                             .then((data) => {
-                                if (data === 404) return res.sendStatus(data)
+                                if (data === 400) return res.status(400).json({ message: "don't have store" })
                                 return res.send({ statusCode: res.statusCode, message: "OK" })
                             })
                             .catch(error => {

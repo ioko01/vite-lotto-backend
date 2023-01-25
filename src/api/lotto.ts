@@ -21,6 +21,7 @@ export class ApiLotto {
                     if (authorize !== 401) {
                         const data = req.body as { id: string }
                         const lotto = await Helpers.getId(doc(db, DBLottos, data.id))
+                        if (!lotto) return res.status(400).json({ message: "don't have lotto" })
                         return res.json(lotto)
                     } else {
                         return res.sendStatus(authorize)
@@ -47,9 +48,9 @@ export class ApiLotto {
                 if (authorize) {
                     if (authorize !== 401) {
                         const q = query(lottosCollectionRef, where("user_create_id", "==", authorize.id))
-                        const snapshot = await Helpers.getContain(q) as ILottoDoc[]
-                        if (!snapshot) return res.sendStatus(403)
-                        return res.json(snapshot)
+                        const lotto = await Helpers.getContain(q) as ILottoDoc[]
+                        if (!lotto) return res.status(400).json({ message: "don't have lotto" })
+                        return res.json(lotto)
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -74,9 +75,9 @@ export class ApiLotto {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        const snapshot = await Helpers.getAll(lottosCollectionRef) as ILottoDoc[]
-                        if (!snapshot) return res.sendStatus(403)
-                        return res.json(snapshot)
+                        const lotto = await Helpers.getAll(lottosCollectionRef) as ILottoDoc[]
+                        if (!lotto) return res.status(400).json({ message: "don't have lotto" })
+                        return res.json(lotto)
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -116,10 +117,10 @@ export class ApiLotto {
 
                         await Helpers.add(lottosCollectionRef, lotto)
                             .then(() => {
-                                res.send({ statusCode: res.statusCode, message: "OK" })
+                                return res.send({ statusCode: res.statusCode, message: "OK" })
                             })
-                            .catch(error => {
-                                res.send({ statusCode: res.statusCode, message: error })
+                            .catch(() => {
+                                return res.status(400).json({ message: "add lotto unsuccessfully" })
                             })
                     } else {
                         return res.sendStatus(authorize)
@@ -137,14 +138,7 @@ export class ApiLotto {
     updateLotto = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
         APP.put(url, middleware, async (req: Request, res: Response) => {
             try {
-                const data = req.body
-                await Helpers.update("1", DBBills, data)
-                    .then(() => {
-                        res.send({ statusCode: res.statusCode, message: "OK" })
-                    })
-                    .catch(error => {
-                        res.send({ statusCode: res.statusCode, message: error })
-                    })
+
             } catch (error) {
                 res.status(res.statusCode).send(error);
             }
@@ -161,11 +155,11 @@ export class ApiLotto {
                         const data = req.body as { id: string }
                         await Helpers.delete(data.id, DBLottos)
                             .then((data) => {
-                                if (data === 404) return res.sendStatus(data)
+                                if (data === 400) return res.status(400).json({ message: "no lotto" })
                                 return res.send({ statusCode: res.statusCode, message: "OK" })
                             })
-                            .catch(error => {
-                                return res.send({ statusCode: res.statusCode, message: error })
+                            .catch(() => {
+                                return res.status(400).json({ message: "delete lotto unsuccessfully" })
                             })
                     } else {
                         return res.sendStatus(authorize)
