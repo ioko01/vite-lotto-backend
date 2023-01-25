@@ -25,6 +25,7 @@ export class ApiUser {
                     if (authorize !== 401) {
                         const isMe = await Helpers.getId(doc(db, DBUsers, authorize.id))
                         if (!isMe) return res.status(400).json({ message: "don't have user" })
+                        // return res.json(isMe)
                         return res.json(isMe)
                     } else {
                         return res.sendStatus(authorize)
@@ -598,14 +599,14 @@ export class ApiUser {
                 const q = query(usersCollectionRef, where("username", "==", data.username))
                 const users = await Helpers.getContain(q) as IUserDoc[]
 
-                if (users.length === 0) return res.status(400).send({ message: "No Account" })
+                if (users.length === 0) return res.status(400).send({ message: "no account" })
 
                 users.map(async (user) => {
                     const isPasswordValid = await bcrypt.compare(
                         data.password,
                         user.password
                     )
-                    if (!isPasswordValid) return res.status(400).send({ message: "Invalid Password" })
+                    if (!isPasswordValid) return res.status(400).send({ message: "invalid password" })
                     if (!user.tokenVersion) return res.sendStatus(403)
                     const token = createToken(user.id, user.tokenVersion!, user.role)
                     const COOKIE_NAME = process.env.COOKIE_NAME!
@@ -613,8 +614,7 @@ export class ApiUser {
                         httpOnly: true,
                         secure: true,
                     })
-
-                    res.json({ token })
+                    return res.send(true)
                 })
 
             } catch (err: any) {
@@ -635,7 +635,7 @@ export class ApiUser {
                         const q = query(usersCollectionRef, where("username", "==", data.username))
                         const users = await Helpers.getContain(q) as IUserDoc[]
 
-                        if (users.length === 0) return res.status(400).send({ message: "No Account" })
+                        if (users.length === 0) return res.status(400).send({ message: "no account" })
 
                         users.map(async (user) => {
                             const COOKIE_NAME = process.env.COOKIE_NAME!

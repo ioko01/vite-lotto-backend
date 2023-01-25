@@ -10,10 +10,13 @@ import { DBUsers, db } from "../utils/firebase";
 import { config } from "dotenv";
 
 config()
+
 export function authenticate(req: Request, res: Response, next: NextFunction) {
     try {
-        const auth = req.headers.authorization && req.headers.authorization.split(" ");
-        if (auth && auth[0] === "Bearer" && auth[1]) {
+        const COOKIE_NAME = process.env.COOKIE_NAME!
+        const auth = req.headers.cookie && req.headers.cookie!.split(`${COOKIE_NAME}=`)
+        
+        if (auth && auth[1]) {
             const token = auth[1]
             jwt.verify(token, publicKey, {
                 algorithms: ["RS256"],
@@ -37,7 +40,6 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
                                 await User.update(decodedToken.UID, DBUsers, { tokenVersion: user.tokenVersion } as IUserDoc)
                                     .then(() => {
                                         const refreshToken = createToken(decodedToken.UID, user.tokenVersion!, decodedToken.role)
-                                        const COOKIE_NAME = process.env.COOKIE_NAME!
                                         res.cookie(COOKIE_NAME!, refreshToken, {
                                             httpOnly: true,
                                             secure: true,

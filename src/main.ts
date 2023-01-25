@@ -1,7 +1,7 @@
 import express, { Express } from 'express'
 import bodyParser from "body-parser";
 import cors from "cors";
-import dotenv from 'dotenv'
+import { config } from 'dotenv'
 import { ApiBill } from './api/bill';
 import { ApiUser } from './api/user';
 import { ApiStore } from './api/store';
@@ -14,7 +14,7 @@ import { ApiDigitSemi } from './api/digitSemi';
 import { ApiDigitClose } from './api/digitClose';
 import { ApiCheckReward } from './api/checkReward';
 
-dotenv.config()
+config()
 
 export const APP: Express = express()
 
