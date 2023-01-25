@@ -1,4 +1,4 @@
-@auth=Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJVSUQiOiJvVnJISWZpcFJyQkFrZFRzZHRhQSIsInRva2VuVmVyc2lvbiI6Miwicm9sZSI6Ik1FTUJFUiIsImlhdCI6MTY3NDYzNTI4NiwiZXhwIjoxNjc0NjU2ODg2fQ.hVACbaTAprmRR8rcIy-i7fjJhzM8wliue8jtEgWO7HP_GF2pv8fzXOjdkXLlB0fsH0B5ru_Gv3HDVPfledPMl4kSqF8ieFfTn80i_r7E5WxaULwcSJZZzhIaWESYL8I81vhkmaQU45fpEUIHxuV_oxoQt0_bDLu-CpE3eGQHh-lcpsX367YJW0_FaTG9z7Szv5LtVpiYIx7gtG-sBJ_5jYxc66GxQVYcslFt30HLCj0I76U1AmQOV0Bpto3SmcfTZ6jEw9n79Y5sQPR2ER9GFj1IBQkO6P-SCB0DTdf3-UaZcK8plpZmrRCK0Roc7Q38jJ2MXTjxWc5qC2XwUkPdmw
+@auth=Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJVSUQiOiJYb01zUnNqVmloUGIyY3N4UVNZaiIsInRva2VuVmVyc2lvbiI6MSwicm9sZSI6Ik1FTUJFUiIsImlhdCI6MTY3NDY0MDA4MCwiZXhwIjoxNjc0NjYxNjgwfQ.qP5GnINjoy2bp3ozLBR226v4citcstzTy33dxr8lc2oRNCRSH25IwTrRSdR_vuLMLBnjgoHI5i3eP4EEDlSanWlyRSUg3rSjSDoV_d-HiQeW8sUWOeDuJbw0LC1uPXTyuaGQL6-EHg_8rnUZ7Y-E2AsxjBrsXKBkLH24p-bNc_6BAMELIfLHeQieV7UL52nVNNz2LpXrO38ZgzeM8aiJQ7pv0d_HEPeMHCRCUPhZ0Qabv00SCtbz9_PEck5zALO4wi82VpMtXpaSCzb3ZpO4gF9jG3dBHg9GaHst3tCi3pckNWsTH6Xnin4LJxg4TO8I4J43RRK-YGu9E9BlIWdZUQ
 
 ###
 POST http://localhost:8000/auth/login
@@ -44,9 +44,9 @@ Authorization: {{auth}}
 content-type: application/json
 
 {
-    "store_id": "0zzpLv1hT55An6jOAmhQ",
-    "lotto_id": "ANc7gslqdd1hpNc2xjQD",
-    "rate_id": "SdgFqeYk1xs8WhLfmG5Z",
+    "store_id": "3RDYTBqOjervu82IKQXm",
+    "lotto_id": "aIJ9G7antRt3s81nIO8G",
+    "rate_id": "Y8yOYqyioxr2a6fospgU",
     "one_digits": [],
     "two_digits": [],
     "three_digits": ["123:50:50"],
@@ -61,5 +61,5 @@ Authorization: {{auth}}
 content-type: application/json
 
 {
-    "id": "ILtzkssmTFPKtDLQ5X2i"
+    "id": "mwQxZya8oDCWiUgILtq8"
 }

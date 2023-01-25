@@ -54,7 +54,7 @@ export class ApiUser {
                         if (!q) return res.sendStatus(403)
 
                         const isUserMe = await Helpers.getContain(q)
-                        if (isUserMe.length === 0) return res.sendStatus(403)
+                        if (isUserMe.length === 0) return res.status(400).json({ message: "don't have user" })
                         return res.json(isUserMe)
                     } else {
                         return res.sendStatus(authorize)
@@ -336,22 +336,22 @@ export class ApiUser {
                     if (authorize !== 401) {
                         const data = req.body as IUser
                         const isValidateUsername = validateUsername(data.username);
-                        if (!isValidateUsername) throw new Error("username invalid");
+                        if (!isValidateUsername) return res.sendStatus(400).send({ message: "username invalid" })
 
                         const isValidatePassword = validatePassword(data.password);
-                        if (!isValidatePassword) throw new Error("password invalid");
+                        if (!isValidatePassword) return res.sendStatus(400).send({ message: "password invalid" })
 
                         const q = query(usersCollectionRef, where("username", "==", data.username))
                         const { docs } = await getDocs(q)
 
-                        if (docs.length > 0) res.sendStatus(400).send({ message: "this username has been used" })
+                        if (docs.length > 0) return res.sendStatus(400).send({ message: "this username has been used" })
 
                         const hashedPassword = await bcrypt.hash(data.password, 10);
 
-                        if (!data.store_id) return res.sendStatus(403)
+                        if (!data.store_id) return res.status(400).json({ message: "please input store" })
                         const isStore = await Helpers.getId(doc(db, DBStores, data.store_id)) as IStoreDoc
 
-                        if (!isStore) return res.sendStatus(403)
+                        if (!isStore) return res.status(400).json({ message: "don't have store" })
 
                         const user: IUser = {
                             store_id: data.store_id,

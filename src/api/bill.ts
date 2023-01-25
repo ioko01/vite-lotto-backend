@@ -7,7 +7,7 @@ import { DBBills, DBLottos, DBRates, DBStores, DBUsers, billsCollectionRef, db, 
 import { DocumentData, Query, doc, documentId, query, where } from "firebase/firestore";
 import { IBill } from "../models/Bill";
 import { GMT } from "../utils/time";
-import { HelperController } from "../helpers/Helpers";
+import { HelperController, ILottoDoc, IRateDoc, IStoreDoc } from "../helpers/Helpers";
 
 const Helpers = new HelperController()
 
@@ -149,14 +149,15 @@ export class ApiBill {
                     if (authorize !== 401) {
                         const data = req.body as IBill
                         if (!data.lotto_id && !data.rate_id && !data.times) return res.sendStatus(403)
-                        const rate = await Helpers.getId(doc(db, DBRates, data.rate_id))
-                        const lotto = await Helpers.getId(doc(db, DBLottos, data.lotto_id))
-                        const store = await Helpers.getId(doc(db, DBStores, data.store_id))
+                        const rate = await Helpers.getId(doc(db, DBRates, data.rate_id)) as IRateDoc
+                        const lotto = await Helpers.getId(doc(db, DBLottos, data.lotto_id)) as ILottoDoc
+                        const store = await Helpers.getId(doc(db, DBStores, data.store_id)) as IStoreDoc
 
                         if (!rate) return res.status(400).json({ message: "don't have rate" })
                         if (!lotto) return res.status(400).json({ message: "don't have lotto" })
                         if (!store) return res.status(400).json({ message: "don't have store" })
 
+                        if (rate.lotto_id !== data.lotto_id) return res.status(400).json({ message: "don't have rate in store" })
                         const bill: IBill = {
                             lotto_id: data.lotto_id,
                             note: data.note,

@@ -1,4 +1,4 @@
-@auth=Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJVSUQiOiJZTDg2ekNpOEZWOGE0dkdjUVBnWSIsInRva2VuVmVyc2lvbiI6Miwicm9sZSI6IkFETUlOIiwiaWF0IjoxNjc0NjMxMTI5LCJleHAiOjE2NzQ2NTI3Mjl9.Ze1PM49Ob2uJfHZlOnW0U3RSHkDl-QgxvaFaYnh62jRIrAhqAE2_bI0fGvANR8VTd1tVzdDjMaCOVLUNJf--KqyHiF96FDvvqYu0mTE08zacOlCB9u80XeldgRYjU9S50htgzXtqF2PJJbP8OHwKLRxNQrFeeOnjzhB28CAQ9kLjQQ6VuFP5_Ya-9iPpxkfw6iAz3GOktxeye7MtbeFUbwoUowk7gWmdxokgjVjDFGIG_076oEkhzGgL9N2VDVaO6byDA-kFgZ9e1FR1WaIpF4p8_kqh2-Z4ded_YI7uzw1ABTFGuB06xyaXEfXlPRSTSIKregzOgYytnLaAtivVTA
+@auth=Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJVSUQiOiI2aGlpYVRXRUxuU09rMFhiWGI0MyIsInRva2VuVmVyc2lvbiI6MSwicm9sZSI6IkFETUlOIiwiaWF0IjoxNjc0NjM4NjEyLCJleHAiOjE2NzQ2NjAyMTJ9.aavGl6Rc3uV190TyXCK5TO_dPo5HYpxAb6Osx-eNyi10QhmpscmnWdF0PU0qnM-3H69x9LUkzXzotZt2IRVNXByNHkbPfAPud62ZvjV1dLeuecuzF1O808Khu60HrsX6iiSKp61T6QytJQ7Z3G2XGOcc2UkspsPuy5Ht4ulUKmm9FEoKJCVMS1-AZmT3v2CzpdjSrg_g1R55RCaG2aqOT_87Q3FKlP1vLhBYVYrdeZH7Ko0lrzXw4oU7_SFcYGFZZuUTNxys43Qeyf_xD___dSAfx2rrJ6GD7tILhKGb7loJmgMOzaDXYbZM-z2M8h3JclzgBsZ2YDRjCzYLzaz7Nw
 
 
 ###
@@ -37,8 +37,8 @@ Authorization: {{auth}}
 content-type: application/json
 
 {
-    "name": "ลาว VIP",
-    "img_flag": "laovip.jpg",
+    "name": "ดาวน์โจนส์ VIP",
+    "img_flag": "jonevip.jpg",
     "open": "2023-01-19 06.00",
     "close": "2023-01-19 00.10",
     "report": "2023-01-19 00.30",
@@ -64,7 +64,7 @@ Authorization: {{auth}}
 content-type: application/json
 
 {
-    "username": "agent02",
+    "username": "agent01",
     "password": "123456789",
     "fullname": "agent",
     "credit": 0
