@@ -44,7 +44,7 @@ export class ApiUser {
                     if (authorize !== 401) {
                         let q: Query<DocumentData> | undefined = undefined
                         if (authorize.role === "ADMIN") {
-                            q = query(usersCollectionRef, where("1", "==", "1"))
+                            q = query(usersCollectionRef)
                         } else if (authorize.role === "AGENT") {
                             q = query(usersCollectionRef, where("agent_create_id", "==", authorize.id))
                         } else if (authorize.role === "MANAGER") {
@@ -631,6 +631,7 @@ export class ApiUser {
                     if (authorize !== 401) {
 
                         const data = req.body as IUser
+                        if (data.username !== authorize.username) return res.sendStatus(401)
                         const q = query(usersCollectionRef, where("username", "==", data.username))
                         const users = await Helpers.getContain(q) as IUserDoc[]
 

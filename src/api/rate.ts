@@ -17,25 +17,18 @@ export class ApiRate {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        const { id } = req.params as { id: string }
                         let q: Query<DocumentData> | undefined = undefined
                         if (authorize.role === "ADMIN") {
-                            q = query(ratesCollectionRef, where(documentId(), "==", id))
+                            q = query(ratesCollectionRef)
                         } else if (authorize.role === "AGENT") {
-                            q = query(ratesCollectionRef, where("user_create_id", "==", authorize.id), where(documentId(), "==", id))
-                        } else if (authorize.role === "MANAGER") {
-                            q = query(ratesCollectionRef, where("user_create_id", "==", authorize.agent_create_id), where(documentId(), "==", id))
+                            q = query(ratesCollectionRef, where("user_create_id", "==", authorize.id))
                         }
 
                         if (!q) return res.sendStatus(403)
 
-                        const getStore = await Helpers.getContain(q) as IStoreDoc[]
-                        if (getStore.length > 0) {
-                            const rate = await Helpers.getId(doc(db, DBRates, id))
-                            if (!rate) return res.sendStatus(404)
-                            return res.json(rate)
-                        }
-                        return res.status(400).json({ message: "don't have rate" })
+                        const rate = await Helpers.getContain(q) as IRateDoc[]
+                        if (rate.length === 0) return res.status(400).json({ message: "don't have rate" })
+                        return res.json(rate)
                     }
                     return res.sendStatus(authorize)
                 } else {

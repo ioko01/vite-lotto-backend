@@ -48,13 +48,13 @@ const server = async () => {
     Lotto.deleteLotto('/delete/lotto', authenticate, ["ADMIN"])
 
     Store.getStoreAllMe('/get/store/me/:id', authenticate, ["ADMIN", "AGENT"])// agent ดูร้านในเครือข่ายของตัวเอง
-    Store.getStoreMe('/get/store/me', authenticate, ["ADMIN", "AGENT", "MANAGER"])// ดูร้านของตัวเอง
+    Store.getStoreMe('/get/store/me', authenticate, ["ADMIN", "AGENT", "MANAGER", "MANAGE_REWARD", "MEMBER"])// ดูร้านของตัวเอง
     Store.getStoreAll('/get/store', authenticate, ["ADMIN"])//ดูร้านทุกร้าน
     Store.addStore('/add/store', authenticate, ["ADMIN", "AGENT"])//เพิ่มร้าน
     Store.updateStore('/add/store', authenticate, ["ADMIN", "AGENT"])//อัพเดตร้าน
     Store.deleteStore('/add/store', authenticate, ["ADMIN", "AGENT"])//ลบร้าน (ทำเป็นสถานะลบออกเฉยๆ)
 
-    Rate.getRateAllMe('/get/rate/id/:id', authenticate, ["ADMIN", "AGENT"])// ดูเรทราคาในเครือข่ายของตัวเอง
+    Rate.getRateAllMe('/get/rate/me/all', authenticate, ["ADMIN", "AGENT"])// ดูเรทราคาในเครือข่ายของตัวเอง
     Rate.getRateMe('/get/rate/me', authenticate, ["MANAGER", "MEMBER"])// ดูเรทราคาของร้านตัวเอง
 
     Rate.getRateAll('/get/rate', authenticate, ["ADMIN"])// ดูเรทราคาทุกร้าน

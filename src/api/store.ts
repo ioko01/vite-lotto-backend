@@ -4,8 +4,7 @@ import { TUserRole } from "../models/User";
 import { authorization } from "../middleware/authorization";
 import { HelperController, IStoreDoc } from "../helpers/Helpers";
 import { DBStores, storesCollectionRef } from '../utils/firebase';
-import { db } from './../utils/firebase';
-import { doc, documentId, query, where } from 'firebase/firestore';
+import { DocumentData, Query, documentId, query, where } from 'firebase/firestore';
 import { GMT } from '../utils/time';
 import { IStore } from '../models/Store';
 
@@ -22,9 +21,9 @@ export class ApiStore {
                         console.log(id, authorize.id);
                         const q = query(storesCollectionRef, where("user_create_id", "==", authorize.id), where(documentId(), "==", id))
 
-                        const bill = await Helpers.getContain(q)
-                        if (bill.length === 0) return res.sendStatus(403)
-                        return res.json(bill)
+                        const store = await Helpers.getContain(q)
+                        if (store.length === 0) return res.status(400).json({ message: "don't have store" })
+                        return res.json(store)
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -49,7 +48,17 @@ export class ApiStore {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        const q = query(storesCollectionRef, where("user_create_id", "==", authorize.id))
+                        let q: Query<DocumentData> | undefined = undefined
+                        if (authorize.role === "ADMIN") {
+                            q = query(storesCollectionRef)
+                        } else if (authorize.role === "AGENT") {
+                            q = query(storesCollectionRef, where("user_create_id", "==", authorize.id))
+                        } else if (authorize.role === "MANAGER" || authorize.role === "MANAGE_REWARD" || authorize.role === "MEMBER") {
+                            q = query(storesCollectionRef, where(documentId(), "==", authorize.store_id))
+                        }
+
+                        if (!q) return res.sendStatus(403)
+
                         const store = await Helpers.getContain(q) as IStoreDoc[]
                         if (!store) return res.status(400).json({ message: "don't have store" })
                         return res.json(store)

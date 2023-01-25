@@ -1,0 +1,93 @@
+@auth=Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJVSUQiOiJZTDg2ekNpOEZWOGE0dkdjUVBnWSIsInRva2VuVmVyc2lvbiI6Miwicm9sZSI6IkFETUlOIiwiaWF0IjoxNjc0NjMxMTI5LCJleHAiOjE2NzQ2NTI3Mjl9.Ze1PM49Ob2uJfHZlOnW0U3RSHkDl-QgxvaFaYnh62jRIrAhqAE2_bI0fGvANR8VTd1tVzdDjMaCOVLUNJf--KqyHiF96FDvvqYu0mTE08zacOlCB9u80XeldgRYjU9S50htgzXtqF2PJJbP8OHwKLRxNQrFeeOnjzhB28CAQ9kLjQQ6VuFP5_Ya-9iPpxkfw6iAz3GOktxeye7MtbeFUbwoUowk7gWmdxokgjVjDFGIG_076oEkhzGgL9N2VDVaO6byDA-kFgZ9e1FR1WaIpF4p8_kqh2-Z4ded_YI7uzw1ABTFGuB06xyaXEfXlPRSTSIKregzOgYytnLaAtivVTA
+
+
+###
+POST http://localhost:8000/add/admin
+content-type: application/json
+
+{
+    "username": "admin01",
+    "password": "123456789",
+    "fullname": "admin",
+    "credit": 0
+}
+
+
+###
+POST http://localhost:8000/auth/login
+Content-Type: application/json
+
+{
+    "username": "admin01",
+    "password": "123456789"
+}
+
+###
+POST http://localhost:8000/auth/logout
+Authorization: {{auth}}
+Content-Type: application/json
+
+{
+    "username": "admin01"
+}
+
+###
+POST http://localhost:8000/add/lotto
+Authorization: {{auth}}
+content-type: application/json
+
+{
+    "name": "ลาว VIP",
+    "img_flag": "laovip.jpg",
+    "open": "2023-01-19 06.00",
+    "close": "2023-01-19 00.10",
+    "report": "2023-01-19 00.30",
+    "status": "OPEN"
+}
+
+###
+DELETE http://localhost:8000/delete/lotto
+Authorization: {{auth}}
+content-type: application/json
+
+{
+    "id": "LKyASx2SgDOtGFioWDT3"
+}
+
+###
+GET http://localhost:8000/get/lotto/all
+Authorization: {{auth}}
+
+###
+POST http://localhost:8000/add/agent
+Authorization: {{auth}}
+content-type: application/json
+
+{
+    "username": "agent02",
+    "password": "123456789",
+    "fullname": "agent",
+    "credit": 0
+}
+
+###
+GET http://localhost:8000/get/bill/all
+Authorization: {{auth}}
+
+###
+GET http://localhost:8000/get/user/me
+Authorization: {{auth}}
+
+###
+GET http://localhost:8000/get/user/all
+Authorization: {{auth}}
+
+###
+PUT http://localhost:8000/update/status/agent
+Authorization: {{auth}}
+content-type: application/json
+
+{
+    "id": "85MI669pD37GGckaKAxh",
+    "status": "REGULAR"
+}

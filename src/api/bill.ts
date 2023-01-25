@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from 'express'
 import { APP } from "../main";
 import { TUserRole } from "../models/User";
 import { authorization } from "../middleware/authorization";
-import { DBBills, DBUsers, billsCollectionRef, db, storesCollectionRef } from "../utils/firebase";
+import { DBBills, DBLottos, DBRates, DBStores, DBUsers, billsCollectionRef, db, storesCollectionRef } from "../utils/firebase";
 import { DocumentData, Query, doc, documentId, query, where } from "firebase/firestore";
 import { IBill } from "../models/Bill";
 import { GMT } from "../utils/time";
@@ -32,13 +32,9 @@ export class ApiBill {
 
                         if (!q) return res.sendStatus(403)
 
-                        const getStore = await Helpers.getContain(q)
-                        if (getStore.length > 0) {
-                            const bill = await Helpers.getId(doc(db, DBBills, id))
-                            if (!bill) return res.sendStatus(404)
-                            return res.json(bill)
-                        }
-                        return res.sendStatus(403)
+                        const bill = await Helpers.getContain(q)
+                        if (bill.length === 0) return res.status(400).json({ message: "don't have bill" })
+                        return res.json(bill)
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -153,6 +149,13 @@ export class ApiBill {
                     if (authorize !== 401) {
                         const data = req.body as IBill
                         if (!data.lotto_id && !data.rate_id && !data.times) return res.sendStatus(403)
+                        const rate = await Helpers.getId(doc(db, DBRates, data.rate_id))
+                        const lotto = await Helpers.getId(doc(db, DBLottos, data.lotto_id))
+                        const store = await Helpers.getId(doc(db, DBStores, data.store_id))
+
+                        if (!rate) return res.status(400).json({ message: "don't have rate" })
+                        if (!lotto) return res.status(400).json({ message: "don't have lotto" })
+                        if (!store) return res.status(400).json({ message: "don't have store" })
 
                         const bill: IBill = {
                             lotto_id: data.lotto_id,

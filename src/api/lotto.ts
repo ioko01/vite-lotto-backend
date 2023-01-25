@@ -155,7 +155,7 @@ export class ApiLotto {
                         const data = req.body as { id: string }
                         await Helpers.delete(data.id, DBLottos)
                             .then((data) => {
-                                if (data === 400) return res.status(400).json({ message: "no lotto" })
+                                if (data === 400) return res.status(400).json({ message: "don't have lotto" })
                                 return res.send({ statusCode: res.statusCode, message: "OK" })
                             })
                             .catch(() => {
