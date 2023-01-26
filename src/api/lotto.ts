@@ -19,7 +19,7 @@ export class ApiLotto {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        const data = req.body as { id: string }
+                        const data = req.params as { id: string }
                         const lotto = await Helpers.getId(doc(db, DBLottos, data.id))
                         if (!lotto) return res.status(400).json({ message: "don't have lotto" })
                         return res.json(lotto)

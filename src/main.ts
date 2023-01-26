@@ -43,6 +43,7 @@ const server = async () => {
     // Lotto.getLottoId('/get/lotto/id/:id', authenticate, ["ADMIN", "AGENT", "MANAGER", "MEMBER"])
     // Lotto.getLottoMe('/get/lotto/me', authenticate, ["ADMIN", "AGENT", "MANAGER", "MEMBER"])
     Lotto.getLottoAll('/get/lotto/all', authenticate, ["ADMIN", "AGENT", "MANAGER", "MEMBER"])
+    Lotto.getLottoId('/get/lotto/id/:id', authenticate, ["ADMIN", "AGENT", "MANAGER", "MEMBER"])
     Lotto.addLotto('/add/lotto', authenticate, ["ADMIN"])
     Lotto.updateLotto('/update/lotto', authenticate, ["ADMIN"])
     Lotto.deleteLotto('/delete/lotto', authenticate, ["ADMIN"])
