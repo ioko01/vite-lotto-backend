@@ -15,8 +15,6 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
     try {
         const COOKIE_NAME = process.env.COOKIE_NAME!
         const auth = req.cookies[COOKIE_NAME]
-        // const auth = req.headers.authorization && req.headers.authorization.split(" ")
-        // if (auth && auth[0] == "Bearer" && auth[1]) {
         if (auth) {
             const token = auth
             jwt.verify(token, publicKey, {
@@ -24,51 +22,51 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
             }, async (err, decoded: string | jwt.JwtPayload | undefined | IToken) => {
                 if (err) return res.sendStatus(401)
 
-                const decode = decoded as IToken
-                if (decode) {
-                    const decodedToken = jwt_decode<IToken>(token)
-                    decodedToken.UID = decode.UID;
-                    decodedToken.tokenVersion = decode.tokenVersion;
+                // const decode = decoded as IToken
+                // if (decode) {
+                //     const decodedToken = jwt_decode<IToken>(token)
+                //     decodedToken.UID = decode.UID;
+                //     decodedToken.tokenVersion = decode.tokenVersion;
 
-                    //Check 1 hr to create token
-                    if (Date.now() / 1000 - decode.iat > 60 * 5 * 1) {
-                        const User = new HelperController()
-                        const user = await User.getId(doc(db, DBUsers, decodedToken.UID)) as IUserDoc
-                        if (user) {
-                            //Check token version
-                            if (user.tokenVersion === user.tokenVersion) {
-                                user.tokenVersion = user.tokenVersion! + 1;
-                                await User.update(decodedToken.UID, DBUsers, { tokenVersion: user.tokenVersion } as IUserDoc)
-                                    .then(() => {
-                                        const refreshToken = createToken(decodedToken.UID, user.tokenVersion!, decodedToken.role)
-                                        return res.cookie(COOKIE_NAME!, refreshToken, {
-                                            httpOnly: process.env.NODE_ENV === "production",
-                                            secure: process.env.NODE_ENV === "production",
-                                        })
-                                            .status(200)
-                                            .json({
-                                                id: user.id,
-                                                username: user.username,
-                                                credit: user.credit,
-                                                fullname: user.fullname,
-                                                role: user.role,
-                                                status: user.status,
-                                                admin_create_id: user.admin_create_id,
-                                                agent_create_id: user.agent_create_id,
-                                                manager_create_id: user.manager_create_id,
-                                                store_id: user.store_id,
-                                                created_at: user.created_at,
-                                                updated_at: user.updated_at,
-                                                user_create_id: user.user_create_id
-                                            } as IUserDoc)
-                                    })
-                                    .catch(() => {
-                                        res.sendStatus(403)
-                                    })
-                            }
-                        }
-                    }
-                }
+                //     //Check 1 hr to create token
+                //     if (Date.now() / 1000 - decode.iat > 60 * 1 * 1) {
+                //         const User = new HelperController()
+                //         const user = await User.getId(doc(db, DBUsers, decodedToken.UID)) as IUserDoc
+                //         if (user) {
+                //             //Check token version
+                //             if (user.tokenVersion === user.tokenVersion) {
+                //                 user.tokenVersion = user.tokenVersion! + 1;
+                //                 await User.update(decodedToken.UID, DBUsers, { tokenVersion: user.tokenVersion } as IUserDoc)
+                //                     .then(() => {
+                //                         const refreshToken = createToken(decodedToken.UID, user.tokenVersion!, decodedToken.role)
+                //                         return res.cookie(COOKIE_NAME!, refreshToken, {
+                //                             httpOnly: process.env.NODE_ENV === "production",
+                //                             secure: process.env.NODE_ENV === "production",
+                //                         })
+                //                             .status(200)
+                //                             .json({
+                //                                 id: user.id,
+                //                                 username: user.username,
+                //                                 credit: user.credit,
+                //                                 fullname: user.fullname,
+                //                                 role: user.role,
+                //                                 status: user.status,
+                //                                 admin_create_id: user.admin_create_id,
+                //                                 agent_create_id: user.agent_create_id,
+                //                                 manager_create_id: user.manager_create_id,
+                //                                 store_id: user.store_id,
+                //                                 created_at: user.created_at,
+                //                                 updated_at: user.updated_at,
+                //                                 user_create_id: user.user_create_id
+                //                             } as IUserDoc)
+                //                     })
+                //                     .catch(() => {
+                //                         res.sendStatus(403)
+                //                     })
+                //             }
+                //         }
+                //     }
+                // }
                 next()
             })
 

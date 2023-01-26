@@ -10,8 +10,6 @@ export async function authorization(req: Request, roles: TUserRole[]) {
     try {
         const COOKIE_NAME = process.env.COOKIE_NAME!
         const auth = req.cookies[COOKIE_NAME]
-        // const auth = req.headers.authorization && req.headers.authorization.split(" ")
-        // if (auth && auth[0] == "Bearer" && auth[1]) {
         if (auth) {
             const token = auth
             const decodedToken = jwt_decode<IToken>(token)
