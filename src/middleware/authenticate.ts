@@ -14,10 +14,11 @@ config()
 export function authenticate(req: Request, res: Response, next: NextFunction) {
     try {
         const COOKIE_NAME = process.env.COOKIE_NAME!
-        const auth = req.headers.cookie && req.headers.cookie!.split(`${COOKIE_NAME}=`)
-        
-        if (auth && auth[1]) {
-            const token = auth[1]
+        const auth = req.cookies[COOKIE_NAME]
+        // const auth = req.headers.authorization && req.headers.authorization.split(" ")
+        // if (auth && auth[0] == "Bearer" && auth[1]) {
+        if (auth) {
+            const token = auth
             jwt.verify(token, publicKey, {
                 algorithms: ["RS256"],
             }, async (err, decoded: string | jwt.JwtPayload | undefined | IToken) => {
@@ -40,10 +41,26 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
                                 await User.update(decodedToken.UID, DBUsers, { tokenVersion: user.tokenVersion } as IUserDoc)
                                     .then(() => {
                                         const refreshToken = createToken(decodedToken.UID, user.tokenVersion!, decodedToken.role)
-                                        res.cookie(COOKIE_NAME!, refreshToken, {
-                                            httpOnly: true,
-                                            secure: true,
+                                        return res.cookie(COOKIE_NAME!, refreshToken, {
+                                            httpOnly: process.env.NODE_ENV === "production",
+                                            secure: process.env.NODE_ENV === "production",
                                         })
+                                            .status(200)
+                                            .json({
+                                                id: user.id,
+                                                username: user.username,
+                                                credit: user.credit,
+                                                fullname: user.fullname,
+                                                role: user.role,
+                                                status: user.status,
+                                                admin_create_id: user.admin_create_id,
+                                                agent_create_id: user.agent_create_id,
+                                                manager_create_id: user.manager_create_id,
+                                                store_id: user.store_id,
+                                                created_at: user.created_at,
+                                                updated_at: user.updated_at,
+                                                user_create_id: user.user_create_id
+                                            } as IUserDoc)
                                     })
                                     .catch(() => {
                                         res.sendStatus(403)

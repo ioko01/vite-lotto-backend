@@ -597,25 +597,38 @@ export class ApiUser {
             try {
                 const data = req.body as IUser
                 const q = query(usersCollectionRef, where("username", "==", data.username))
-                const users = await Helpers.getContain(q) as IUserDoc[]
+                const [user] = await Helpers.getContain(q) as IUserDoc[]
 
-                if (users.length === 0) return res.status(400).send({ message: "no account" })
+                if (!user) return res.status(400).send({ message: "no account" })
 
-                users.map(async (user) => {
-                    const isPasswordValid = await bcrypt.compare(
-                        data.password,
-                        user.password
-                    )
-                    if (!isPasswordValid) return res.status(400).send({ message: "invalid password" })
-                    if (!user.tokenVersion) return res.sendStatus(403)
-                    const token = createToken(user.id, user.tokenVersion!, user.role)
-                    const COOKIE_NAME = process.env.COOKIE_NAME!
-                    res.cookie(COOKIE_NAME!, token, {
-                        httpOnly: true,
-                        secure: true,
-                    })
-                    return res.send(true)
+                const isPasswordValid = await bcrypt.compare(
+                    data.password,
+                    user.password
+                )
+                if (!isPasswordValid) return res.status(400).send({ message: "invalid password" })
+                if (!user.tokenVersion) return res.sendStatus(403)
+                const token = createToken(user.id, user.tokenVersion!, user.role)
+                const COOKIE_NAME = process.env.COOKIE_NAME!
+                return res.cookie(COOKIE_NAME!, token, {
+                    httpOnly: process.env.NODE_ENV === "production",
+                    secure: process.env.NODE_ENV === "production",
                 })
+                    .status(200)
+                    .json({
+                        id: user.id,
+                        username: user.username,
+                        credit: user.credit,
+                        fullname: user.fullname,
+                        role: user.role,
+                        status: user.status,
+                        admin_create_id: user.admin_create_id,
+                        agent_create_id: user.agent_create_id,
+                        manager_create_id: user.manager_create_id,
+                        store_id: user.store_id,
+                        created_at: user.created_at,
+                        updated_at: user.updated_at,
+                        user_create_id: user.user_create_id
+                    } as IUserDoc)
 
             } catch (err: any) {
                 res.send(err)
