@@ -9,34 +9,36 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BillController = void 0;
+exports.StoreController = void 0;
 const firebase_1 = require("../utils/firebase");
 const firestore_1 = require("firebase/firestore");
-class BillController {
+class StoreController {
     constructor() {
-        this.getContain = (q, db) => __awaiter(this, void 0, void 0, function* () {
-            const { docs } = yield (0, firestore_1.getDocs)(q);
+        this.getContain = () => __awaiter(this, void 0, void 0, function* () {
+            const { docs } = yield (0, firestore_1.getDocs)(firebase_1.storesCollectionRef);
+            return docs.map((doc) => {
+                return Object.assign(Object.assign({}, doc.data()), { id: doc.id });
+            });
+        });
+        this.getMe = () => __awaiter(this, void 0, void 0, function* () {
+            const { docs } = yield (0, firestore_1.getDocs)(firebase_1.storesCollectionRef);
             return docs.map((doc) => {
                 return Object.assign(Object.assign({}, doc.data()), { id: doc.id });
             });
         });
         this.getAll = () => __awaiter(this, void 0, void 0, function* () {
-            const { docs } = yield (0, firestore_1.getDocs)(firebase_1.billsCollectionRef);
+            const { docs } = yield (0, firestore_1.getDocs)(firebase_1.storesCollectionRef);
             return docs.map((doc) => {
                 return Object.assign(Object.assign({}, doc.data()), { id: doc.id });
             });
         });
-        this.add = (bill) => __awaiter(this, void 0, void 0, function* () {
-            return yield (0, firestore_1.addDoc)(firebase_1.billsCollectionRef, bill);
+        this.add = (store) => __awaiter(this, void 0, void 0, function* () {
+            return yield (0, firestore_1.addDoc)(firebase_1.storesCollectionRef, store);
         });
-        this.update = (id, bill) => __awaiter(this, void 0, void 0, function* () {
-            const tutorialDoc = (0, firestore_1.doc)(firebase_1.db, firebase_1.DBBills, id);
-            return yield (0, firestore_1.updateDoc)(tutorialDoc, firebase_1.DBBills, bill);
-        });
-        this.delete = (id) => __awaiter(this, void 0, void 0, function* () {
-            const billDoc = (0, firestore_1.doc)(firebase_1.db, firebase_1.DBBills, id);
-            return yield (0, firestore_1.deleteDoc)(billDoc);
+        this.update = (id, store) => __awaiter(this, void 0, void 0, function* () {
+            const tutorialDoc = (0, firestore_1.doc)(firebase_1.db, firebase_1.DBStores, id);
+            return yield (0, firestore_1.updateDoc)(tutorialDoc, firebase_1.DBStores, store);
         });
     }
 }
-exports.BillController = BillController;
+exports.StoreController = StoreController;
