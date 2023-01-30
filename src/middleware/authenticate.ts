@@ -40,8 +40,8 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
                                     .then(() => {
                                         const refreshToken = createToken(decodedToken.UID, user.tokenVersion!, decodedToken.role)
                                         return res.cookie(COOKIE_NAME!, refreshToken, {
-                                            httpOnly: process.env.NODE_ENV === "production",
-                                            secure: process.env.NODE_ENV === "production",
+                                            httpOnly: false,
+                                            secure: false,
                                         })
                                             .status(200)
                                             .json({
