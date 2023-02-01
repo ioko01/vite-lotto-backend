@@ -658,7 +658,7 @@ export class ApiUser {
                             res.clearCookie(COOKIE_NAME!, {
                                 httpOnly: false,
                                 secure: false,
-                                sameSite: "lax"
+                                sameSite: "none"
                             })
 
                             res.json({ message: "logout" })
