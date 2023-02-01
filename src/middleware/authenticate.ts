@@ -41,8 +41,8 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
                                         const refreshToken = createToken(decodedToken.UID, user.tokenVersion!, decodedToken.role)
                                         return res.cookie(COOKIE_NAME!, refreshToken, {
                                             httpOnly: false,
-                                            secure: false,
-                                            sameSite: "none"
+                                            secure: true,
+                                            sameSite: "lax"
                                         })
                                             .status(200)
                                             .json({

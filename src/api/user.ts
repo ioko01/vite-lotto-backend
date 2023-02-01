@@ -657,8 +657,8 @@ export class ApiUser {
                             Helpers.update(authorize.id, DBUsers, updateToken)
                             res.clearCookie(COOKIE_NAME!, {
                                 httpOnly: false,
-                                secure: false,
-                                sameSite: "none"
+                                secure: true,
+                                sameSite: "lax"
                             })
 
                             res.json({ message: "logout" })
