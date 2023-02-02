@@ -609,7 +609,10 @@ export class ApiUser {
                 if (!user.tokenVersion) return res.sendStatus(403)
                 const token = createToken(user.id, user.tokenVersion!, user.role)
                 const COOKIE_NAME = process.env.COOKIE_NAME!
-                return res.cookie(COOKIE_NAME!, token)
+                return res.cookie(COOKIE_NAME!, token, {
+                    secure: true,
+                    sameSite: true
+                })
                     .status(200)
                     .json({
                         id: user.id,
