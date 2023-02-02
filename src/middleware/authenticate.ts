@@ -43,7 +43,6 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
                                             httpOnly: process.env.NODE_ENV == "production",
                                             secure: true,
                                             sameSite: "none",
-                                            domain: "vite-lot.netlify.app"
                                         })
                                             .status(200)
                                             .json({
