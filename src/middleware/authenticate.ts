@@ -42,7 +42,7 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
                                         return res.cookie(COOKIE_NAME!, refreshToken, {
                                             httpOnly: false,
                                             secure: true,
-                                            sameSite: "lax"
+                                            sameSite: "none"
                                         })
                                             .status(200)
                                             .json({

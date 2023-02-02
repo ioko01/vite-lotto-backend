@@ -612,7 +612,7 @@ export class ApiUser {
                 return res.cookie(COOKIE_NAME!, token, {
                     httpOnly: false,
                     secure: true,
-                    sameSite: "lax"
+                    sameSite: "none"
                 })
                     .status(200)
                     .json({
