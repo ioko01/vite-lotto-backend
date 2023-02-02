@@ -32,7 +32,7 @@ export async function authorization(req: Request, roles: TUserRole[]) {
                     store_id: user.store_id,
                     user_create_id: user.user_create_id,
                     tokenVersion: user.tokenVersion,
-                    password: user.password
+                    password: user.password,
                 }
 
                 if (roles.includes(decodedToken.role)) return isUser
