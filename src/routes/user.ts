@@ -608,8 +608,8 @@ export class ApiUser {
                 if (!isPasswordValid) return res.status(400).send({ message: "invalid password" })
                 if (!user.tokenVersion) return res.sendStatus(403)
                 const token = createToken(user.id, user.tokenVersion!, user.role)
-                const COOKIE_NAME = process.env.COOKIE_NAME!
-                return res.cookie(COOKIE_NAME!, token, {
+                const VITE_OPS_COOKIE_NAME = process.env.VITE_OPS_COOKIE_NAME!
+                return res.cookie(VITE_OPS_COOKIE_NAME!, token, {
                     httpOnly: process.env.NODE_ENV == "production",
                     secure: process.env.NODE_ENV == "production",
                     sameSite: "none",
@@ -652,11 +652,11 @@ export class ApiUser {
                         if (users.length === 0) return res.status(400).send({ message: "no account" })
 
                         users.map(async (user) => {
-                            const COOKIE_NAME = process.env.COOKIE_NAME!
+                            const VITE_OPS_COOKIE_NAME = process.env.VITE_OPS_COOKIE_NAME!
                             const updateToken = { tokenVersion: user.tokenVersion! + 1 } as IUser
 
                             Helpers.update(authorize.id, DBUsers, updateToken)
-                            res.clearCookie(COOKIE_NAME!, {
+                            res.clearCookie(VITE_OPS_COOKIE_NAME!, {
                                 httpOnly: false,
                                 secure: true,
                                 sameSite: "lax"

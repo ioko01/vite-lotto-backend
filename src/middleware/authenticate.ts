@@ -13,8 +13,8 @@ config()
 
 export function authenticate(req: Request, res: Response, next: NextFunction) {
     try {
-        const COOKIE_NAME = process.env.COOKIE_NAME!
-        const auth = req.cookies[COOKIE_NAME]
+        const VITE_OPS_COOKIE_NAME = process.env.VITE_OPS_COOKIE_NAME!
+        const auth = req.cookies[VITE_OPS_COOKIE_NAME]
         if (auth) {
             const token = auth
             jwt.verify(token, publicKey, {
@@ -39,7 +39,7 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
                                 await User.update(decodedToken.UID, DBUsers, { tokenVersion: user.tokenVersion } as IUserDoc)
                                     .then(() => {
                                         const refreshToken = createToken(decodedToken.UID, user.tokenVersion!, decodedToken.role)
-                                        return res.cookie(COOKIE_NAME!, refreshToken, {
+                                        return res.cookie(VITE_OPS_COOKIE_NAME!, refreshToken, {
                                             httpOnly: process.env.NODE_ENV == "production",
                                             secure: process.env.NODE_ENV == "production",
                                             sameSite: "none",
