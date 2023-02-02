@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express'
-import { APP } from "../main";
+import { router } from "../api";
 import { TUserRole } from "../models/User";
 import { authorization } from "../middleware/authorization";
-import { HelperController, IRateDoc, IStoreDoc } from "../helpers/Helpers";
-import { DBLottos, DBRates, DBStores, db, ratesCollectionRef } from './../utils/firebase';
+import { HelperController, IRateDoc, IStoreDoc } from "../helpers/Default";
+import { DBLottos, DBRates, DBStores, db, ratesCollectionRef } from '../utils/firebase';
 import { DocumentData, Query, doc, documentId, query, where } from 'firebase/firestore';
 import { IRate } from '../models/Rate';
 import { GMT } from '../utils/time';
@@ -12,7 +12,7 @@ const Helpers = new HelperController()
 
 export class ApiRate {
     getRateAllMe = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.get(url, middleware, async (req: Request, res: Response) => {
+        router.get(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
@@ -47,7 +47,7 @@ export class ApiRate {
     }
 
     getRateMe = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.get(url, middleware, async (req: Request, res: Response) => {
+        router.get(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
@@ -74,7 +74,7 @@ export class ApiRate {
     }
 
     getRateAll = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.get(url, middleware, async (req: Request, res: Response) => {
+        router.get(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
@@ -98,7 +98,7 @@ export class ApiRate {
     }
 
     addRate = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.post(url, middleware, async (req: Request, res: Response) => {
+        router.post(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
@@ -148,7 +148,7 @@ export class ApiRate {
     }
 
     updateRate = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.put(url, middleware, async (req: Request, res: Response) => {
+        router.put(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
@@ -168,7 +168,7 @@ export class ApiRate {
     }
 
     deleteRate = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.delete(url, middleware, async (req: Request, res: Response) => {
+        router.delete(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {

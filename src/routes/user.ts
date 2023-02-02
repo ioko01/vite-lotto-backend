@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { APP } from "../main";
+import { router } from "../api";
 import { DocumentData, Query, doc, documentId, getDocs, query, where } from 'firebase/firestore';
 import { validatePassword, validateUsername } from '../utils/validate';
 import { IUser, TUserRole, TUserRoleEnum } from '../models/User';
@@ -8,7 +8,7 @@ import bcrypt from "bcrypt";
 import { GMT } from '../utils/time';
 import { createToken } from '../middleware/authenticate';
 import { config } from "dotenv";
-import { HelperController, IStoreDoc, IUserDoc } from '../helpers/Helpers';
+import { HelperController, IStoreDoc, IUserDoc } from '../helpers/Default';
 import { authorization } from '../middleware/authorization';
 
 config()
@@ -18,7 +18,7 @@ const Helpers = new HelperController()
 export class ApiUser {
 
     getMe = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.get(url, middleware, async (req: Request, res: Response) => {
+        router.get(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
@@ -38,7 +38,7 @@ export class ApiUser {
     }
 
     getUserAllMe = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.get(url, middleware, async (req: Request, res: Response) => {
+        router.get(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
@@ -68,7 +68,7 @@ export class ApiUser {
     }
 
     getUserAll = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.get(url, middleware, async (req: Request, res: Response) => {
+        router.get(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
@@ -87,7 +87,7 @@ export class ApiUser {
     }
 
     credit = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.put(url, middleware, async (req: Request, res: Response) => {
+        router.put(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
@@ -179,7 +179,7 @@ export class ApiUser {
     }
 
     updateStatus = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.put(url, middleware, async (req: Request, res: Response) => {
+        router.put(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
@@ -222,7 +222,7 @@ export class ApiUser {
     }
 
     addUserAdmin = (url: string) => {
-        APP.post(url, async (req: Request, res: Response) => {
+        router.post(url, async (req: Request, res: Response) => {
             try {
                 const q = query(usersCollectionRef, where("role", "==", TUserRoleEnum.ADMIN))
                 const isAdmin = await getDocs(q)
@@ -274,7 +274,7 @@ export class ApiUser {
     }
 
     addUserAgent = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.post(url, middleware, async (req: Request, res: Response) => {
+        router.post(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
@@ -330,7 +330,7 @@ export class ApiUser {
     }
 
     addUserManager = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.post(url, middleware, async (req: Request, res: Response) => {
+        router.post(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
@@ -393,7 +393,7 @@ export class ApiUser {
     }
 
     addUserMember = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.post(url, middleware, async (req: Request, res: Response) => {
+        router.post(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
@@ -476,7 +476,7 @@ export class ApiUser {
     }
 
     deleteUserAgent = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.post(url, middleware, async (req: Request, res: Response) => {
+        router.post(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
@@ -512,7 +512,7 @@ export class ApiUser {
     }
 
     deleteUserManager = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.post(url, middleware, async (req: Request, res: Response) => {
+        router.post(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
@@ -548,7 +548,7 @@ export class ApiUser {
     }
 
     deleteUserMember = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.post(url, middleware, async (req: Request, res: Response) => {
+        router.post(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
@@ -593,7 +593,7 @@ export class ApiUser {
     }
 
     login = (url: string) => {
-        APP.post(url, async (req: Request, res: Response) => {
+        router.post(url, async (req: Request, res: Response) => {
             try {
                 const data = req.body as IUser
                 const q = query(usersCollectionRef, where("username", "==", data.username))
@@ -637,7 +637,7 @@ export class ApiUser {
     }
 
     logout = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.post(url, middleware, async (req: Request, res: Response) => {
+        router.post(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
@@ -676,7 +676,7 @@ export class ApiUser {
     }
 
     updateUser = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.put(url, middleware, async (req: Request, res: Response) => {
+        router.put(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {

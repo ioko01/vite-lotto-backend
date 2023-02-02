@@ -1,22 +1,22 @@
 import { NextFunction, Request, Response } from 'express'
-import { APP } from "../main";
+import { router } from "../api";
 import { TUserRole } from "../models/User";
 import { authorization } from "../middleware/authorization";
-import { HelperController } from "../helpers/Helpers";
+import { HelperController } from "../helpers/Default";
 import { DBDigitsClose, db, digitsCloseCollectionRef } from '../utils/firebase';
 import { doc, query, where } from 'firebase/firestore';
-import { IDigitCloseDoc } from './../helpers/Helpers';
+import { IDigitCloseDoc } from '../helpers/Default';
 
 const Helpers = new HelperController()
 
 export class ApiDigitClose {
     getDigitCloseId = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.get(url, middleware, async (req: Request, res: Response) => {
+        router.get(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        
+
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -36,12 +36,12 @@ export class ApiDigitClose {
     }
 
     getDigitCloseMe = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.get(url, middleware, async (req: Request, res: Response) => {
+        router.get(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        
+
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -60,12 +60,12 @@ export class ApiDigitClose {
     }
 
     getDigitCloseAll = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.get(url, middleware, async (req: Request, res: Response) => {
+        router.get(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        
+
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -84,12 +84,12 @@ export class ApiDigitClose {
     }
 
     addDigitClose = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.post(url, middleware, async (req: Request, res: Response) => {
+        router.post(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        
+
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -103,12 +103,12 @@ export class ApiDigitClose {
     }
 
     updateDigitClose = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.put(url, middleware, async (req: Request, res: Response) => {
+        router.put(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        
+
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -123,12 +123,12 @@ export class ApiDigitClose {
     }
 
     deleteDigitClose = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.delete(url, middleware, async (req: Request, res: Response) => {
+        router.delete(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        
+
                     } else {
                         return res.sendStatus(authorize)
                     }

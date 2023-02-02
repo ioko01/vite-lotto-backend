@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from 'express'
-import { APP } from "../main";
+import { router } from "../api";
 import { TUserRole } from "../models/User";
 import { authorization } from "../middleware/authorization";
 import { DBBills, DBLottos, db, lottosCollectionRef } from "../utils/firebase";
 import { doc, query, where } from "firebase/firestore";
 import { GMT } from "../utils/time";
-import { HelperController, ILottoDoc } from "../helpers/Helpers";
+import { HelperController, ILottoDoc } from "../helpers/Default";
 import { ILotto } from "../models/Lotto";
 
 const Helpers = new HelperController()
@@ -14,7 +14,7 @@ const Helpers = new HelperController()
 export class ApiLotto {
 
     getLottoId = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.get(url, middleware, async (req: Request, res: Response) => {
+        router.get(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
@@ -42,7 +42,7 @@ export class ApiLotto {
     }
 
     getLottoMe = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.get(url, middleware, async (req: Request, res: Response) => {
+        router.get(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
@@ -70,7 +70,7 @@ export class ApiLotto {
     }
 
     getLottoAll = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.get(url, middleware, async (req: Request, res: Response) => {
+        router.get(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
@@ -97,7 +97,7 @@ export class ApiLotto {
     }
 
     addLotto = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.post(url, middleware, async (req: Request, res: Response) => {
+        router.post(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
@@ -136,7 +136,7 @@ export class ApiLotto {
     }
 
     updateLotto = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.put(url, middleware, async (req: Request, res: Response) => {
+        router.put(url, middleware, async (req: Request, res: Response) => {
             try {
 
             } catch (error) {
@@ -147,7 +147,7 @@ export class ApiLotto {
     }
 
     deleteLotto = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.delete(url, middleware, async (req: Request, res: Response) => {
+        router.delete(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {

@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import { privateKey, publicKey } from "../utils/keys";
 import { TUserRole } from "../models/User";
 import { IToken } from "../models/Token";
-import { HelperController, IUserDoc } from "../helpers/Helpers";
+import { HelperController, IUserDoc } from "../helpers/Default";
 import jwt_decode from "jwt-decode";
 import { doc } from "firebase/firestore";
 import { DBUsers, db } from "../utils/firebase";

@@ -2,6 +2,7 @@
   "dependencies": {
     "@firebase/app": "^0.9.0",
     "@firebase/auth": "^0.21.0",
+    "@netlify/functions": "^1.4.0",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.1",
     "cookie-parser": "^1.4.6",
@@ -11,6 +12,7 @@
     "firebase": "^9.15.0",
     "jsonwebtoken": "^9.0.0",
     "jwt-decode": "^3.1.2",
+    "nodemon": "^2.0.20",
     "serverless-http": "^3.1.1",
     "ts-node": "^10.9.1"
   },
@@ -23,16 +25,16 @@
     "@types/firebase": "^3.2.1",
     "@types/jsonwebtoken": "^9.0.1",
     "@types/jwt-decode": "^3.1.0",
-    "@types/node": "^18.11.18",
-    "typescript": "^4.9.4"
+    "@types/node": "^14.18.36",
+    "typescript": "^4.9.5"
   },
   "name": "vite-lotto-backend",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "npx tsc",
-    "start": "node dist/main.js",
-    "dev": "nodemon src/main.ts",
+    "build": "tsc",
+    "start": "npm run start dist/api.js",
+    "dev": "nodemon src/api.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "postinstall": "tsc"
   },

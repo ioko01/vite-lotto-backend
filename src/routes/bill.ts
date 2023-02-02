@@ -1,21 +1,20 @@
 import { IBillDoc } from "../helpers/Bill";
 import { NextFunction, Request, Response } from 'express'
-import { APP } from "../main";
+import { router } from "../api";
 import { TUserRole } from "../models/User";
 import { authorization } from "../middleware/authorization";
 import { DBBills, DBLottos, DBRates, DBStores, DBUsers, billsCollectionRef, db, storesCollectionRef } from "../utils/firebase";
 import { DocumentData, Query, doc, documentId, query, where } from "firebase/firestore";
 import { IBill } from "../models/Bill";
 import { GMT } from "../utils/time";
-import { HelperController, ILottoDoc, IRateDoc, IStoreDoc } from "../helpers/Helpers";
+import { HelperController, ILottoDoc, IRateDoc, IStoreDoc } from "../helpers/Default";
 
 const Helpers = new HelperController()
-
 
 export class ApiBill {
 
     getBillAllMe = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.get(url, middleware, async (req: Request, res: Response) => {
+        router.get(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
@@ -54,7 +53,7 @@ export class ApiBill {
     }
 
     getBillMe = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.get(url, middleware, async (req: Request, res: Response) => {
+        router.get(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
@@ -82,7 +81,7 @@ export class ApiBill {
     }
 
     getBillAll = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.get(url, middleware, async (req: Request, res: Response) => {
+        router.get(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
@@ -142,7 +141,7 @@ export class ApiBill {
     }
 
     addBill = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.post(url, middleware, async (req: Request, res: Response) => {
+        router.post(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
@@ -204,7 +203,7 @@ export class ApiBill {
     }
 
     // updateBill = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-    //     APP.put(url, middleware, async (req: Request, res: Response) => {
+    //     router.put(url, middleware, async (req: Request, res: Response) => {
     //         try {
     //             const data = req.body
     //             await Helpers.update("1", DBBills, data)
@@ -222,7 +221,7 @@ export class ApiBill {
     // }
 
     deleteBill = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.put(url, middleware, async (req: Request, res: Response) => {
+        router.put(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {

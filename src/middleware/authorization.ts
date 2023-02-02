@@ -2,7 +2,7 @@ import { Request } from "express";
 import jwt_decode from "jwt-decode";
 import { IToken } from "../models/Token";
 import { TUserRole } from "../models/User";
-import { HelperController, IUserDoc } from "../helpers/Helpers";
+import { HelperController, IUserDoc } from "../helpers/Default";
 import { doc } from "firebase/firestore";
 import { DBUsers, db } from "../utils/firebase";
 

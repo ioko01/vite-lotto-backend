@@ -1,14 +1,14 @@
 import { NextFunction, Request, Response } from 'express'
-import { APP } from "../main";
+import { router } from "../api";
 import { TUserRole } from "../models/User";
 import { authorization } from "../middleware/authorization";
-import { HelperController } from "../helpers/Helpers";
+import { HelperController } from "../helpers/Default";
 
 const Helpers = new HelperController()
 
 export class ApiCheckReward {
     getCheckRewardId = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.get(url, middleware, async (req: Request, res: Response) => {
+        router.get(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
@@ -32,12 +32,12 @@ export class ApiCheckReward {
     }
 
     getCheckRewardMe = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.get(url, middleware, async (req: Request, res: Response) => {
+        router.get(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        
+
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -56,12 +56,12 @@ export class ApiCheckReward {
     }
 
     getCheckRewardAll = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.get(url, middleware, async (req: Request, res: Response) => {
+        router.get(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        
+
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -80,12 +80,12 @@ export class ApiCheckReward {
     }
 
     addCheckReward = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.post(url, middleware, async (req: Request, res: Response) => {
+        router.post(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        
+
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -99,12 +99,12 @@ export class ApiCheckReward {
     }
 
     updateCheckReward = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.put(url, middleware, async (req: Request, res: Response) => {
+        router.put(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        
+
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -119,12 +119,12 @@ export class ApiCheckReward {
     }
 
     deleteCheckReward = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.delete(url, middleware, async (req: Request, res: Response) => {
+        router.delete(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        
+
                     } else {
                         return res.sendStatus(authorize)
                     }

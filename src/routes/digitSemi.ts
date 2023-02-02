@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express'
-import { APP } from "../main";
+import { router } from "../api";
 import { TUserRole } from "../models/User";
 import { authorization } from "../middleware/authorization";
-import { HelperController, IDigitSemiDoc } from "../helpers/Helpers";
+import { HelperController, IDigitSemiDoc } from "../helpers/Default";
 import { DBDigitsSemi, digitsSemiCollectionRef } from '../utils/firebase';
 import { db } from '../utils/firebase';
 import { doc, query, where } from 'firebase/firestore';
@@ -11,12 +11,12 @@ const Helpers = new HelperController()
 
 export class ApiDigitSemi {
     getDigitSemiId = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.get(url, middleware, async (req: Request, res: Response) => {
+        router.get(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        
+
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -36,12 +36,12 @@ export class ApiDigitSemi {
     }
 
     getDigitSemiMe = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.get(url, middleware, async (req: Request, res: Response) => {
+        router.get(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        
+
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -60,12 +60,12 @@ export class ApiDigitSemi {
     }
 
     getDigitSemiAll = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.get(url, middleware, async (req: Request, res: Response) => {
+        router.get(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        
+
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -84,12 +84,12 @@ export class ApiDigitSemi {
     }
 
     addDigitSemi = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.post(url, middleware, async (req: Request, res: Response) => {
+        router.post(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        
+
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -103,12 +103,12 @@ export class ApiDigitSemi {
     }
 
     updateDigitSemi = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.put(url, middleware, async (req: Request, res: Response) => {
+        router.put(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        
+
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -123,12 +123,12 @@ export class ApiDigitSemi {
     }
 
     deleteDigitSemi = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
-        APP.delete(url, middleware, async (req: Request, res: Response) => {
+        router.delete(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        
+
                     } else {
                         return res.sendStatus(authorize)
                     }
