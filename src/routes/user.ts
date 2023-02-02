@@ -610,9 +610,9 @@ export class ApiUser {
                 const token = createToken(user.id, user.tokenVersion!, user.role)
                 const COOKIE_NAME = process.env.COOKIE_NAME!
                 return res.cookie(COOKIE_NAME!, token, {
-                    httpOnly: false,
-                    secure: true,
-                    sameSite: "lax"
+                    httpOnly: process.env.NODE_ENV == "production",
+                    secure: process.env.NODE_ENV == "production",
+                    sameSite: "none",
                 })
                     .status(200)
                     .json({

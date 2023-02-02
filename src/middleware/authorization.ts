@@ -8,8 +8,8 @@ import { DBUsers, db } from "../utils/firebase";
 
 export async function authorization(req: Request, roles: TUserRole[]) {
     try {
-        const COOKIE_NAME = process.env.COOKIE_NAME!
-        const auth = req.cookies[COOKIE_NAME]
+        const VITE_OPS_COOKIE_NAME = process.env.VITE_OPS_COOKIE_NAME!
+        const auth = req.cookies[VITE_OPS_COOKIE_NAME]
         if (auth) {
             const token = auth
             const decodedToken = jwt_decode<IToken>(token)

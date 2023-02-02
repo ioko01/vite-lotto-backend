@@ -10,6 +10,6 @@ declare global {
         VITE_OPS_FIREBASE_MESSAGING_SENDER_ID: string;
         VITE_OPS_FIREBASE_APP_ID: string;
         VITE_OPS_FIREBASE_MEASUREMENT_ID: string;
-        VITE_OPS_URL: string;
+        VITE_OPS_COOKIE_NAME: string;
     }
 }
