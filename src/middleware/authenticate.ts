@@ -39,11 +39,7 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
                                 await User.update(decodedToken.UID, DBUsers, { tokenVersion: user.tokenVersion } as IUserDoc)
                                     .then(() => {
                                         const refreshToken = createToken(decodedToken.UID, user.tokenVersion!, decodedToken.role)
-                                        return res.cookie(COOKIE_NAME!, refreshToken, {
-                                            httpOnly: true,
-                                            secure: true,
-                                            sameSite: "lax"
-                                        })
+                                        return res.cookie(COOKIE_NAME!, refreshToken)
                                             .status(200)
                                             .json({
                                                 id: user.id,
