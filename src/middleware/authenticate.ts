@@ -43,6 +43,7 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
                                             httpOnly: process.env.NODE_ENV == "production",
                                             secure: true,
                                             sameSite: "none",
+                                            domain: process.env.VITE_OPS_URL
                                         })
                                             .status(200)
                                             .json({
