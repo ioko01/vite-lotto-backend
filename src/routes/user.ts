@@ -611,7 +611,7 @@ export class ApiUser {
                 const COOKIE_NAME = process.env.COOKIE_NAME!
                 return res.cookie(COOKIE_NAME!, token, {
                     httpOnly: false,
-                    secure: true,
+                    secure: false,
                     sameSite: "none"
                 })
                     .status(200)
