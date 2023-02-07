@@ -122,9 +122,9 @@ User.logout('/auth/logout', authenticate, ["ADMIN", "AGENT", "MANAGER", "MEMBER"
 // member เพิ่มบิล
 // รอผลออกและให้ MANAGE_REWARD เป็นคนกรอกผล
 
-// APP.listen(PORT, () => {
-//     console.log(`⚡️[server]: Server is running at http://localhost:${PORT}`)
-// })
-
 APP.use("/", router)
-export const handler = serverless(APP);
+
+APP.listen(PORT, () => {
+    console.log(`⚡️[server]: Server is running at http://localhost:${PORT}`)
+})
+// export const handler = serverless(APP);
