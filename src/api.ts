@@ -125,7 +125,7 @@ User.logout('/auth/logout', authenticate, ["ADMIN", "AGENT", "MANAGER", "MEMBER"
 
 APP.use("/", router)
 
-APP.listen(PORT, () => {
-    console.log(`⚡️[server]: Server is running at http://localhost:${PORT}`)
-})
-// export const handler = serverless(APP);
+// APP.listen(PORT, () => {
+//     console.log(`⚡️[server]: Server is running at http://localhost:${PORT}`)
+// })
+export const handler = serverless(APP);
