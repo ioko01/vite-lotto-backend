@@ -23,6 +23,7 @@ export const router = express.Router()
 APP.use(cookieParser())
 APP.use(cors(corsOption))
 APP.use(bodyParser.json())
+APP.set("trust proxy", 1)
 
 const Bill = new ApiBill()
 const User = new ApiUser()

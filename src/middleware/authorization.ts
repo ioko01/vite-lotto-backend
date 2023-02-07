@@ -34,7 +34,7 @@ export async function authorization(req: Request, roles: TUserRole[]) {
                     tokenVersion: user.tokenVersion,
                     password: user.password,
                 }
-
+                
                 if (roles.includes(decodedToken.role)) return isUser
                 return 401
             }
