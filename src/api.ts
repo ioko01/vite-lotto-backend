@@ -20,7 +20,7 @@ config()
 export const APP: Express = express()
 export const router = express.Router()
 
-APP.set("trust proxy", 1)
+// APP.set("trust proxy", 1)
 APP.use(cookieParser())
 APP.use(cors(corsOption))
 APP.use(bodyParser.json())
