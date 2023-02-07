@@ -610,9 +610,8 @@ export class ApiUser {
                 const token = createToken(user.id, user.tokenVersion!, user.role)
                 const VITE_OPS_COOKIE_NAME = process.env.VITE_OPS_COOKIE_NAME!
                 return res.cookie(VITE_OPS_COOKIE_NAME!, token, {
-                    httpOnly: process.env.NODE_ENV == "production",
                     secure: process.env.NODE_ENV == "production",
-                    sameSite: process.env.NODE_ENV == "production" && "lax"
+                    sameSite: process.env.NODE_ENV == "production" ? "none" : "lax"
                 })
                     .status(200)
                     .json({
@@ -657,9 +656,8 @@ export class ApiUser {
 
                             Helpers.update(authorize.id, DBUsers, updateToken)
                             res.clearCookie(VITE_OPS_COOKIE_NAME!, {
-                                httpOnly: process.env.NODE_ENV == "production",
                                 secure: process.env.NODE_ENV == "production",
-                                sameSite: process.env.NODE_ENV == "production" && "lax"
+                                sameSite: process.env.NODE_ENV == "production" ? "none" : "lax"
                             })
 
                             res.json({ message: "logout" })
