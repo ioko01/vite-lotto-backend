@@ -97,6 +97,34 @@ export class ApiRate {
         })
     }
 
+    getRateId = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
+        router.get(url, middleware, async (req: Request, res: Response) => {
+            try {
+                const authorize = await authorization(req, roles)
+                if (authorize) {
+                    if (authorize !== 401) {
+                        console.log(req.params.id);
+                        const q = query(ratesCollectionRef, where("lotto_id", "==", req.params.id))
+                        const [rate] = await Helpers.getContain(q) as IRateDoc[]
+                        if (!rate) return res.status(400).json({ message: "don't have rate" })
+                        return res.json(rate)
+                    } else {
+                        return res.sendStatus(authorize)
+                    }
+                } else {
+                    return res.sendStatus(401)
+                }
+            } catch (err: any) {
+                if (err.code === 11000) {
+                    return res.status(409).json({
+                        status: 'fail',
+                        message: 'username already exist',
+                    });
+                }
+            }
+        })
+    }
+
     addRate = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
         router.post(url, middleware, async (req: Request, res: Response) => {
             try {

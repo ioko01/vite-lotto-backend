@@ -61,7 +61,7 @@ Rate.getRateAllMe('/get/rate/me/all', authenticate, ["ADMIN", "AGENT"])// ดู
 Rate.getRateMe('/get/rate/me', authenticate, ["MANAGER", "MEMBER"])// ดูเรทราคาของร้านตัวเอง
 
 Rate.getRateAll('/get/rate', authenticate, ["ADMIN"])// ดูเรทราคาทุกร้าน
-Rate.getRateAll('/get/rate/id/:id', authenticate, ["ADMIN", "AGENT", "MANAGER", "MANAGE_REWARD", "MEMBER"])// ดูเรทราคาทุกร้าน
+Rate.getRateId('/get/rate/id/:id', authenticate, ["ADMIN", "AGENT", "MANAGER", "MANAGE_REWARD", "MEMBER"])// ดูเรทราคาทุกร้าน
 Rate.addRate('/add/rate', authenticate, ["ADMIN", "AGENT"])// เพิ่มเรทราคา
 Rate.updateRate('/add/rate', authenticate, ["ADMIN", "AGENT"])
 Rate.deleteRate('/add/rate', authenticate, ["ADMIN", "AGENT"])
