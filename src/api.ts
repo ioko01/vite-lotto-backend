@@ -20,7 +20,7 @@ config()
 export const APP: Express = express()
 export const router = express.Router()
 
-APP.set("trust proxy", 1)
+// APP.set("trust proxy", 1)
 APP.use(cookieParser())
 APP.use(cors(corsOption))
 APP.use(bodyParser.json())
@@ -61,6 +61,7 @@ Rate.getRateAllMe('/get/rate/me/all', authenticate, ["ADMIN", "AGENT"])// ดู
 Rate.getRateMe('/get/rate/me', authenticate, ["MANAGER", "MEMBER"])// ดูเรทราคาของร้านตัวเอง
 
 Rate.getRateAll('/get/rate', authenticate, ["ADMIN"])// ดูเรทราคาทุกร้าน
+Rate.getRateAll('/get/rate/id/:id', authenticate, ["ADMIN", "AGENT", "MANAGER", "MANAGE_REWARD", "MEMBER"])// ดูเรทราคาทุกร้าน
 Rate.addRate('/add/rate', authenticate, ["ADMIN", "AGENT"])// เพิ่มเรทราคา
 Rate.updateRate('/add/rate', authenticate, ["ADMIN", "AGENT"])
 Rate.deleteRate('/add/rate', authenticate, ["ADMIN", "AGENT"])
@@ -125,7 +126,7 @@ User.logout('/auth/logout', authenticate, ["ADMIN", "AGENT", "MANAGER", "MEMBER"
 
 APP.use("/", router)
 
-// APP.listen(PORT, () => {
-//     console.log(`⚡️[server]: Server is running at http://localhost:${PORT}`)
-// })
-export const handler = serverless(APP);
+APP.listen(PORT, () => {
+    console.log(`⚡️[server]: Server is running at http://localhost:${PORT}`)
+})
+// export const handler = serverless(APP);
