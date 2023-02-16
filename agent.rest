@@ -1,4 +1,4 @@
-@auth=Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJVSUQiOiJwU0oyaml3V1BNajdrc0NRRzV3ViIsInRva2VuVmVyc2lvbiI6MSwicm9sZSI6IkFHRU5UIiwiaWF0IjoxNjc0NjM5NTAxLCJleHAiOjE2NzQ2NjExMDF9.MPVn2gsbvPSjSkVnOQJNzuVHghOOSVFxrXMfPxXK4oHgRIa_7_A-5nwp1X9IoRejyZqrKdxxAdoRjUeqIZPVq8tMY-3OR9EPkv-dvtAmIi1TkIJfLVzrShevRzHpO8mJYWxQi-MLrzL5sJo5JuargERacEm3NjRpPT271Bm-GsVKAwjn5SpzUQ_Y36E-_fDrRQ5xEwVhpGOXtRUMS033xn00zyutfyDMbGD5nOIhqXq4SjVnnnHlygDxOddux12G6AI3MUuFRyNnPDh6fgNGKJowcQKN1jI31iYrrWnKncIAuzGhKP98Kxi3owtiJ_FuV5YH-eI7uyTGLHVqdLwMYA
+@auth=jwt=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJVSUQiOiJwU0oyaml3V1BNajdrc0NRRzV3ViIsInRva2VuVmVyc2lvbiI6MSwicm9sZSI6IkFHRU5UIiwiaWF0IjoxNjc2NTIxMzQ5LCJleHAiOjE2NzY1NDI5NDl9.0uUf1M0Czun4ngWbaggkNimTj7o4OhK4oeU7xVOijcoW9sHGizHJKaKgJ00XuBuhR9TR8jiDHLnZmyVW2zw46PVJkcZhUgHVyXrAm70mnFjlq5cncQrtkU_FEKoUm4LWsGDAyp03py8C1KaEi3JZpra5JtH01MvaXt8y1v-_FxEKGmOIGksqMOtx_Iz_vtb_evhoJT1VudD1Kvrz88PvTXarj0YWQjWGZBSWn4GNloyqTpkbMgGbsilHl2rr5Rub2WTIWgGlLLXdnPtg1OX3DbbADaCcRFDbMgP0AGorf4TvJEbc-Tq6elY7IM4Z8S5Cw8ZxdWhj6VgxAtSv-HhsLg;
 
 ###
 POST http://localhost:8000/auth/login
@@ -11,7 +11,7 @@ Content-Type: application/json
 
 ###
 POST http://localhost:8000/auth/logout
-Authorization: {{auth}}
+Cookie: {{auth}}
 Content-Type: application/json
 
 {
@@ -20,7 +20,7 @@ Content-Type: application/json
 
 ###
 POST http://localhost:8000/add/store
-Authorization: {{auth}}
+Cookie: {{auth}}
 content-type: application/json
 
 {
@@ -30,20 +30,20 @@ content-type: application/json
 
 ###
 GET http://localhost:8000/get/store/me
-Authorization: {{auth}}
+Cookie: {{auth}}
 
 ###
 GET http://localhost:8000/get/lotto/all
-Authorization: {{auth}}
+Cookie: {{auth}}
 
 ###
 POST http://localhost:8000/add/rate
-Authorization: {{auth}}
+Cookie: {{auth}}
 content-type: application/json
 
 {
     "store_id":"3RDYTBqOjervu82IKQXm",
-    "lotto_id": "aIJ9G7antRt3s81nIO8G",
+    "lotto_id": "LAsvfoFfN6SnIeT18BzC",
     "one_digits": {
         "top": "3",
         "bottom": "4"
@@ -86,11 +86,11 @@ content-type: application/json
 
 ###
 GET http://localhost:8000/get/rate/me/all
-Authorization: {{auth}}
+Cookie: {{auth}}
 
 ###
 POST http://localhost:8000/add/manager
-Authorization: {{auth}}
+Cookie: {{auth}}
 content-type: application/json
 
 {
@@ -103,11 +103,21 @@ content-type: application/json
 
 ###
 GET http://localhost:8000/get/user/me
-Authorization: {{auth}}
+Cookie: {{auth}}
 
 ###
 PUT http://localhost:8000/add/credit
-Authorization: {{auth}}
+Cookie: {{auth}}
+content-type: application/json
+
+{
+    "id": "9pxJRIMKeNIRhqJlMDcZ",
+    "credit": 50000
+}
+
+###
+PUT http://localhost:8000/add/credit
+Cookie: {{auth}}
 content-type: application/json
 
 {
@@ -118,7 +128,7 @@ content-type: application/json
 
 ###
 PUT http://localhost:8000/remove/credit
-Authorization: {{auth}}
+Cookie: {{auth}}
 content-type: application/json
 
 {
@@ -128,7 +138,7 @@ content-type: application/json
 
 ###
 POST http://localhost:8000/add/member
-Authorization: {{auth}}
+Cookie: {{auth}}
 content-type: application/json
 
 {
@@ -138,3 +148,35 @@ content-type: application/json
     "fullname": "test01",
     "credit": 0
 }
+
+###
+POST http://localhost:8000/add/digitclose
+Cookie: {{auth}}
+content-type: application/json
+
+{
+    "lotto_id": "LAsvfoFfN6SnIeT18BzC",
+    "percent": 0,
+    "rate_id": "Y8yOYqyioxr2a6fospgU",
+    "store_id": "3RDYTBqOjervu82IKQXm",
+    "one_digits": {
+        "top": [],
+        "bottom": []
+    },
+    "two_digits": {
+        "top": ["15", "51"],
+        "bottom": ["15", "51"]
+    },
+    "three_digits": {
+        "top": [],
+        "bottom": []
+    }
+}
+
+###
+GET http://localhost:8000/get/digitclose/me
+Cookie: {{auth}}
+
+###
+GET http://localhost:8000/get/digitclose/id/LAsvfoFfN6SnIeT18BzC
+Cookie: {{auth}}

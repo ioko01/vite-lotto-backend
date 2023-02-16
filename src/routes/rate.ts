@@ -103,7 +103,6 @@ export class ApiRate {
                 const authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
-                        console.log(req.params.id);
                         const q = query(ratesCollectionRef, where("lotto_id", "==", req.params.id))
                         const [rate] = await Helpers.getContain(q) as IRateDoc[]
                         if (!rate) return res.status(400).json({ message: "don't have rate" })

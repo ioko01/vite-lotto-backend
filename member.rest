@@ -11,7 +11,7 @@ Content-Type: application/json
 
 ###
 POST http://localhost:8000/auth/logout
-Authorization: {{auth}}
+Cookie: {{auth}}
 Content-Type: application/json
 
 {
@@ -20,27 +20,27 @@ Content-Type: application/json
 
 ###
 GET http://localhost:8000/me
-Authorization: {{auth}}
+Cookie: {{auth}}
 
 ###
 GET http://localhost:8000/get/bill/me
-Authorization: {{auth}}
+Cookie: {{auth}}
 
 ###
 GET http://localhost:8000/get/store/me
-Authorization: {{auth}}
+Cookie: {{auth}}
 
 ###
 GET http://localhost:8000/get/lotto/all
-Authorization: {{auth}}
+Cookie: {{auth}}
 
 ###
 GET http://localhost:8000/get/rate/me
-Authorization: {{auth}}
+Cookie: {{auth}}
 
 ###
 POST http://localhost:8000/add/bill
-Authorization: {{auth}}
+Cookie: {{auth}}
 content-type: application/json
 
 {
@@ -57,7 +57,7 @@ content-type: application/json
 
 ###
 PUT http://localhost:8000/delete/bill
-Authorization: {{auth}}
+Cookie: {{auth}}
 content-type: application/json
 
 {

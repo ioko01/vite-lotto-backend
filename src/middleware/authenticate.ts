@@ -40,8 +40,8 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
                                     .then(() => {
                                         const refreshToken = createToken(decodedToken.UID, user.tokenVersion!, decodedToken.role)
                                         return res.cookie(VITE_OPS_COOKIE_NAME!, refreshToken, {
-                                            secure: process.env.NODE_ENV == "production",
-                                            sameSite: process.env.NODE_ENV == "production" ? "none" : "lax"
+                                            secure: true,
+                                            sameSite: "lax"
                                         })
                                             .status(200)
                                             .json({
