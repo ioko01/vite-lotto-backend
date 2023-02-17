@@ -1,4 +1,4 @@
-import express, { Express } from 'express'
+import express, { Application } from 'express'
 import bodyParser from "body-parser";
 import cors from "cors";
 import { config } from 'dotenv'
@@ -14,11 +14,25 @@ import { ApiDigitSemi } from './routes/digitSemi';
 import { ApiDigitClose } from './routes/digitClose';
 import { ApiCheckReward } from './routes/checkReward';
 import serverless from "serverless-http";
+import http from "http";
+import { Server } from "socket.io";
+import { ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData } from './utils/socket-io';
+import { digitCloseHandler } from './socket/digitCloseHandler';
 
 config()
 
-export const APP: Express = express()
+export const APP: Application = express()
 export const router = express.Router()
+
+const server = http.createServer(APP)
+
+export const io = new Server<
+    ClientToServerEvents,
+    ServerToClientEvents,
+    InterServerEvents,
+    SocketData
+>(server, { cors: corsOption });
+
 
 // APP.set("trust proxy", 1)
 APP.use(cookieParser())
@@ -33,6 +47,17 @@ const Rate = new ApiRate()
 const DigitSemi = new ApiDigitSemi()
 const DigitClose = new ApiDigitClose()
 const CheckReward = new ApiCheckReward()
+
+io.on("connection", (socket) => {
+
+    digitCloseHandler(socket)
+
+    socket.on("disconnect", () => {
+        console.log("user is disconnected");
+    })
+})
+
+
 
 // :id = ไอดีที่ต้องการ :store = ไอดีร้าน
 Bill.getBillAllMe('/get/bill/id/:id', authenticate, ["ADMIN", "AGENT", "MANAGER"])// ดูบิลทั้งหมดของร้านตัวเอง
@@ -126,7 +151,7 @@ User.logout('/auth/logout', authenticate, ["ADMIN", "AGENT", "MANAGER", "MEMBER"
 
 APP.use("/", router)
 
-APP.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`⚡️[server]: Server is running at http://localhost:${PORT}`)
 })
 // export const handler = serverless(APP);
