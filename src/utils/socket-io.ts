@@ -1,4 +1,3 @@
-import { IDigitClose } from "../models/DigitClose";
 
 export interface ServerToClientEvents {
     noArg: () => void;
