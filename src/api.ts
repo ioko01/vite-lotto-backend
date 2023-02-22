@@ -1,4 +1,4 @@
-import express, { Application } from 'express'
+import express, { Application, Request, Response } from 'express'
 import bodyParser from "body-parser";
 import cors from "cors";
 import { config } from 'dotenv'
@@ -148,6 +148,9 @@ User.logout('/auth/logout', authenticate, ["ADMIN", "AGENT", "MANAGER", "MEMBER"
 // manager เพิ่ม credit ให้ member
 // member เพิ่มบิล
 // รอผลออกและให้ MANAGE_REWARD เป็นคนกรอกผล
+router.get("/", (_, res: Response) => {
+    res.send("Welcome to API")
+})
 
 APP.use("/", router)
 
