@@ -110,6 +110,36 @@ class ApiRate {
                 }
             }));
         };
+        this.getRateId = (url, middleware, roles) => {
+            api_1.router.get(url, middleware, (req, res) => __awaiter(this, void 0, void 0, function* () {
+                try {
+                    const authorize = yield (0, authorization_1.authorization)(req, roles);
+                    if (authorize) {
+                        if (authorize !== 401) {
+                            const q = (0, firestore_1.query)(firebase_1.ratesCollectionRef, (0, firestore_1.where)("lotto_id", "==", req.params.id));
+                            const [rate] = yield Helpers.getContain(q);
+                            if (!rate)
+                                return res.status(400).json({ message: "don't have rate" });
+                            return res.json(rate);
+                        }
+                        else {
+                            return res.sendStatus(authorize);
+                        }
+                    }
+                    else {
+                        return res.sendStatus(401);
+                    }
+                }
+                catch (err) {
+                    if (err.code === 11000) {
+                        return res.status(409).json({
+                            status: 'fail',
+                            message: 'username already exist',
+                        });
+                    }
+                }
+            }));
+        };
         this.addRate = (url, middleware, roles) => {
             api_1.router.post(url, middleware, (req, res) => __awaiter(this, void 0, void 0, function* () {
                 try {

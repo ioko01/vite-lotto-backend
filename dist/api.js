@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.router = exports.APP = void 0;
+exports.io = exports.router = exports.APP = void 0;
 const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const cors_1 = __importDefault(require("cors"));
@@ -19,9 +19,15 @@ const rate_1 = require("./routes/rate");
 const digitSemi_1 = require("./routes/digitSemi");
 const digitClose_1 = require("./routes/digitClose");
 const checkReward_1 = require("./routes/checkReward");
+const http_1 = __importDefault(require("http"));
+const socket_io_1 = require("socket.io");
+const digitCloseHandler_1 = require("./socket/digitCloseHandler");
 (0, dotenv_1.config)();
 exports.APP = (0, express_1.default)();
 exports.router = express_1.default.Router();
+const server = http_1.default.createServer(exports.APP);
+exports.io = new socket_io_1.Server(server, { cors: default_1.corsOption });
+// APP.set("trust proxy", 1)
 exports.APP.use((0, cookie_parser_1.default)());
 exports.APP.use((0, cors_1.default)(default_1.corsOption));
 exports.APP.use(body_parser_1.default.json());
@@ -33,6 +39,12 @@ const Rate = new rate_1.ApiRate();
 const DigitSemi = new digitSemi_1.ApiDigitSemi();
 const DigitClose = new digitClose_1.ApiDigitClose();
 const CheckReward = new checkReward_1.ApiCheckReward();
+exports.io.on("connection", (socket) => {
+    (0, digitCloseHandler_1.digitCloseHandler)(socket);
+    socket.on("disconnect", () => {
+        console.log("user is disconnected");
+    });
+});
 // :id = ไอดีที่ต้องการ :store = ไอดีร้าน
 Bill.getBillAllMe('/get/bill/id/:id', authenticate_1.authenticate, ["ADMIN", "AGENT", "MANAGER"]); // ดูบิลทั้งหมดของร้านตัวเอง
 Bill.getBillAll('/get/bill/all', authenticate_1.authenticate, ["ADMIN"]); // ดูบิลทั้งหมด
@@ -56,6 +68,7 @@ Store.deleteStore('/add/store', authenticate_1.authenticate, ["ADMIN", "AGENT"])
 Rate.getRateAllMe('/get/rate/me/all', authenticate_1.authenticate, ["ADMIN", "AGENT"]); // ดูเรทราคาในเครือข่ายของตัวเอง
 Rate.getRateMe('/get/rate/me', authenticate_1.authenticate, ["MANAGER", "MEMBER"]); // ดูเรทราคาของร้านตัวเอง
 Rate.getRateAll('/get/rate', authenticate_1.authenticate, ["ADMIN"]); // ดูเรทราคาทุกร้าน
+Rate.getRateId('/get/rate/id/:id', authenticate_1.authenticate, ["ADMIN", "AGENT", "MANAGER", "MANAGE_REWARD", "MEMBER"]); // ดูเรทราคาทุกร้าน
 Rate.addRate('/add/rate', authenticate_1.authenticate, ["ADMIN", "AGENT"]); // เพิ่มเรทราคา
 Rate.updateRate('/add/rate', authenticate_1.authenticate, ["ADMIN", "AGENT"]);
 Rate.deleteRate('/add/rate', authenticate_1.authenticate, ["ADMIN", "AGENT"]);
@@ -65,12 +78,12 @@ DigitSemi.getDigitSemiAll('/get/digitsemi', authenticate_1.authenticate, ["ADMIN
 DigitSemi.addDigitSemi('/add/digitsemi', authenticate_1.authenticate, ["ADMIN", "AGENT"]);
 DigitSemi.updateDigitSemi('/add/digitsemi', authenticate_1.authenticate, ["ADMIN", "AGENT"]);
 DigitSemi.deleteDigitSemi('/add/digitsemi', authenticate_1.authenticate, ["ADMIN", "AGENT"]);
-DigitClose.getDigitCloseId('/get/digitclose', authenticate_1.authenticate, ["ADMIN", "AGENT"]);
-DigitClose.getDigitCloseMe('/get/digitclose', authenticate_1.authenticate, ["ADMIN", "AGENT", "MANAGER", "MEMBER"]);
-DigitClose.getDigitCloseAll('/get/digitclose', authenticate_1.authenticate, ["ADMIN"]);
+DigitClose.getDigitCloseId('/get/digitclose/id/:id', authenticate_1.authenticate, ["ADMIN", "AGENT", "MANAGER", "MEMBER"]);
+DigitClose.getDigitCloseMe('/get/digitclose/me', authenticate_1.authenticate, ["ADMIN", "AGENT", "MANAGER", "MEMBER"]);
+DigitClose.getDigitCloseAll('/get/digitclose/all', authenticate_1.authenticate, ["ADMIN"]);
 DigitClose.addDigitClose('/add/digitclose', authenticate_1.authenticate, ["ADMIN", "AGENT"]);
-DigitClose.updateDigitClose('/add/digitclose', authenticate_1.authenticate, ["ADMIN", "AGENT"]);
-DigitClose.deleteDigitClose('/add/digitclose', authenticate_1.authenticate, ["ADMIN", "AGENT"]);
+DigitClose.updateDigitClose('/update/digitclose', authenticate_1.authenticate, ["ADMIN", "AGENT"]);
+DigitClose.deleteDigitClose('/delete/digitclose', authenticate_1.authenticate, ["ADMIN", "AGENT"]);
 // CheckReward.getCheckRewardId('/get/store', authenticate, ["ADMIN", "AGENT", "MANAGER"])
 // CheckReward.getCheckRewardMe('/get/store', authenticate, ["ADMIN", "AGENT", "MANAGER"])
 CheckReward.getCheckRewardAll('/get/store', authenticate_1.authenticate, ["ADMIN", "AGENT", "MANAGER", "MEMBER", "MANAGE_REWARD"]);
@@ -105,8 +118,11 @@ User.logout('/auth/logout', authenticate_1.authenticate, ["ADMIN", "AGENT", "MAN
 // manager เพิ่ม credit ให้ member
 // member เพิ่มบิล
 // รอผลออกและให้ MANAGE_REWARD เป็นคนกรอกผล
+exports.router.get("/", (_, res) => {
+    res.send("Welcome to API");
+});
 exports.APP.use("/", exports.router);
-exports.APP.listen(default_1.PORT, () => {
+server.listen(default_1.PORT, () => {
     console.log(`⚡️[server]: Server is running at http://localhost:${default_1.PORT}`);
 });
 // export const handler = serverless(APP);

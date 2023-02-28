@@ -15,7 +15,7 @@ import { ApiDigitClose } from './routes/digitClose';
 import { ApiCheckReward } from './routes/checkReward';
 import serverless from "serverless-http";
 import http from "http";
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 import { ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData } from './utils/socket-io';
 import { digitCloseHandler } from './socket/digitCloseHandler';
 
@@ -48,7 +48,7 @@ const DigitSemi = new ApiDigitSemi()
 const DigitClose = new ApiDigitClose()
 const CheckReward = new ApiCheckReward()
 
-io.on("connection", (socket) => {
+io.on("connection", (socket: Socket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>) => {
 
     digitCloseHandler(socket)
 

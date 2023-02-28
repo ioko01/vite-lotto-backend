@@ -7,4 +7,5 @@ exports.PORT = process.env.PORT || 8000;
 exports.corsOption = {
     origin: process.env.VITE_OPS_URL,
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"]
 };

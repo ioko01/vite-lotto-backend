@@ -49,7 +49,6 @@ function authenticate(req, res, next) {
                                     .then(() => {
                                     const refreshToken = (0, exports.createToken)(decodedToken.UID, user.tokenVersion, decodedToken.role);
                                     return res.cookie(VITE_OPS_COOKIE_NAME, refreshToken, {
-                                        httpOnly: false,
                                         secure: true,
                                         sameSite: "lax"
                                     })

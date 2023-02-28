@@ -13,6 +13,9 @@ exports.ApiDigitClose = void 0;
 const api_1 = require("../api");
 const authorization_1 = require("../middleware/authorization");
 const Default_1 = require("../helpers/Default");
+const firebase_1 = require("../utils/firebase");
+const firestore_1 = require("firebase/firestore");
+const time_1 = require("../utils/time");
 const Helpers = new Default_1.HelperController();
 class ApiDigitClose {
     constructor() {
@@ -22,6 +25,12 @@ class ApiDigitClose {
                     const authorize = yield (0, authorization_1.authorization)(req, roles);
                     if (authorize) {
                         if (authorize !== 401) {
+                            const data = req.params;
+                            const q = (0, firestore_1.query)(firebase_1.digitsCloseCollectionRef, (0, firestore_1.where)("lotto_id", "==", data.id));
+                            const [digitClose] = yield Helpers.getContain(q);
+                            if (!digitClose)
+                                return res.status(400).json({ message: "don't have digit close" });
+                            return res.json(digitClose);
                         }
                         else {
                             return res.sendStatus(authorize);
@@ -47,6 +56,11 @@ class ApiDigitClose {
                     const authorize = yield (0, authorization_1.authorization)(req, roles);
                     if (authorize) {
                         if (authorize !== 401) {
+                            const q = (0, firestore_1.query)(firebase_1.digitsCloseCollectionRef, (0, firestore_1.where)("user_create_id", "==", authorize.id));
+                            const digitClose = yield Helpers.getContain(q);
+                            if (!digitClose)
+                                return res.status(400).json({ message: "don't have digit close" });
+                            return res.json(digitClose);
                         }
                         else {
                             return res.sendStatus(authorize);
@@ -97,6 +111,30 @@ class ApiDigitClose {
                     const authorize = yield (0, authorization_1.authorization)(req, roles);
                     if (authorize) {
                         if (authorize !== 401) {
+                            const data = req.body;
+                            const q = (0, firestore_1.query)(firebase_1.digitsCloseCollectionRef, (0, firestore_1.where)("lotto_id", "==", data.lotto_id), (0, firestore_1.where)("rate_id", "==", data.rate_id), (0, firestore_1.where)("store_id", "==", data.store_id));
+                            const isStore = yield Helpers.getContain(q);
+                            if (isStore.length > 0)
+                                return res.status(400).json({ message: "this digit close has been used" });
+                            const digitClose = {
+                                lotto_id: data.lotto_id,
+                                percent: data.percent,
+                                rate_id: data.rate_id,
+                                store_id: data.store_id,
+                                one_digits: data.one_digits,
+                                two_digits: data.two_digits,
+                                three_digits: data.three_digits,
+                                user_create_id: authorize.id,
+                                created_at: (0, time_1.GMT)(),
+                                updated_at: (0, time_1.GMT)(),
+                            };
+                            yield Helpers.add(firebase_1.digitsCloseCollectionRef, digitClose)
+                                .then(() => {
+                                res.send({ statusCode: res.statusCode, message: "OK" });
+                            })
+                                .catch(error => {
+                                res.send({ statusCode: res.statusCode, message: error });
+                            });
                         }
                         else {
                             return res.sendStatus(authorize);

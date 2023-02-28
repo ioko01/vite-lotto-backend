@@ -619,7 +619,6 @@ class ApiUser {
                     const token = (0, authenticate_1.createToken)(user.id, user.tokenVersion, user.role);
                     const VITE_OPS_COOKIE_NAME = process.env.VITE_OPS_COOKIE_NAME;
                     return res.cookie(VITE_OPS_COOKIE_NAME, token, {
-                        httpOnly: false,
                         secure: true,
                         sameSite: "lax"
                     })
@@ -663,7 +662,6 @@ class ApiUser {
                                 const updateToken = { tokenVersion: user.tokenVersion + 1 };
                                 Helpers.update(authorize.id, firebase_1.DBUsers, updateToken);
                                 res.clearCookie(VITE_OPS_COOKIE_NAME, {
-                                    httpOnly: false,
                                     secure: true,
                                     sameSite: "lax"
                                 });
