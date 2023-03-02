@@ -18,6 +18,7 @@ import http from "http";
 import { Server, Socket } from "socket.io";
 import { ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData } from './utils/socket-io';
 import { digitCloseHandler } from './socket/digitCloseHandler';
+import { userHandler } from './socket/userHandler';
 
 config()
 
@@ -51,6 +52,7 @@ const CheckReward = new ApiCheckReward()
 io.on("connection", (socket: Socket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>) => {
 
     digitCloseHandler(socket)
+    userHandler(socket)
 
     socket.on("disconnect", () => {
         console.log("user is disconnected");
