@@ -117,6 +117,7 @@ CheckReward.deleteCheckReward('/add/store', authenticate, ["ADMIN", "AGENT", "MA
 User.getUserAll('/get/user/all', authenticate, ["ADMIN"])// ดูผู้ใช้งานทั้งหมด
 User.getUserAllMe('/get/user/me', authenticate, ["ADMIN", "AGENT", "MANAGER"])// ดูผู้ใช้งานลูกข่ายตัวเอง
 User.getMe('/me', authenticate, ["ADMIN", "AGENT", "MANAGER", "MEMBER", "MANAGE_REWARD"])// ดูข้อมูลตัวเอง
+User.getId('/id', authenticate, ["ADMIN", "AGENT", "MANAGER", "MEMBER", "MANAGE_REWARD"])// ดูข้อมูลไอดี
 
 User.credit('/:excute/credit', authenticate, ["ADMIN", "AGENT", "MANAGER"])// เครดิต (เพิ่ม/ลบ)
 

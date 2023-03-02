@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { router } from "../api";
 import { DocumentData, Query, doc, documentId, getDocs, query, where } from 'firebase/firestore';
 import { validatePassword, validateUsername } from '../utils/validate';
-import { IUser, TUserRole, TUserRoleEnum } from '../models/User';
+import { IUser, TUserRole, TUserRoleEnum, TUserStatusEnum } from '../models/User';
 import { DBStores, DBUsers, db, usersCollectionRef } from '../utils/firebase';
 import bcrypt from "bcrypt";
 import { GMT } from '../utils/time';
@@ -27,6 +27,28 @@ export class ApiUser {
                         if (!isMe) return res.status(400).json({ message: "don't have user" })
                         // return res.json(isMe)
                         return res.json(isMe)
+                    } else {
+                        return res.sendStatus(authorize)
+                    }
+                }
+            } catch (err: any) {
+                res.send(err)
+            }
+        })
+    }
+
+    getId = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
+        router.post(url, middleware, async (req: Request, res: Response) => {
+            try {
+                const authorize = await authorization(req, roles)
+                const data = req.body as { username: string }
+                if (authorize) {
+                    if (authorize !== 401) {
+                        const q = query(usersCollectionRef, where("username", "==", data.username))
+                        const isId = await Helpers.getContain(q)
+                        if (!isId) return res.status(400).json({ message: "don't have user" })
+                        // return res.json(isId)
+                        return res.json(isId)
                     } else {
                         return res.sendStatus(authorize)
                     }
@@ -297,9 +319,9 @@ export class ApiUser {
                             username: data.username,
                             password: hashedPassword,
                             fullname: data.fullname,
-                            credit: data.credit,
-                            role: "AGENT",
-                            status: "REGULAR",
+                            credit: 0,
+                            role: TUserRoleEnum.AGENT,
+                            status: TUserStatusEnum.REGULAR,
                             created_at: GMT(),
                             updated_at: GMT(),
                             tokenVersion: 1,
