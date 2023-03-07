@@ -37,7 +37,7 @@ export class ApiUser {
         })
     }
 
-    getId = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
+    getUsername = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
         router.post(url, middleware, async (req: Request, res: Response) => {
             try {
                 const authorize = await authorization(req, roles)
@@ -45,6 +45,28 @@ export class ApiUser {
                 if (authorize) {
                     if (authorize !== 401) {
                         const q = query(usersCollectionRef, where("username", "==", data.username))
+                        const isId = await Helpers.getContain(q)
+                        if (!isId) return res.status(400).json({ message: "don't have user" })
+                        // return res.json(isId)
+                        return res.json(isId)
+                    } else {
+                        return res.sendStatus(authorize)
+                    }
+                }
+            } catch (err: any) {
+                res.send(err)
+            }
+        })
+    }
+
+    getId = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
+        router.post(url, middleware, async (req: Request, res: Response) => {
+            try {
+                const authorize = await authorization(req, roles)
+                const data = req.body as { user_create_id: string }
+                if (authorize) {
+                    if (authorize !== 401) {
+                        const q = query(usersCollectionRef, where("user_create_id", "==", data.user_create_id))
                         const isId = await Helpers.getContain(q)
                         if (!isId) return res.status(400).json({ message: "don't have user" })
                         // return res.json(isId)
@@ -96,6 +118,27 @@ export class ApiUser {
                 if (authorize) {
                     if (authorize !== 401) {
                         const user = await Helpers.getAll(usersCollectionRef) as IUserDoc[]
+                        if (!user) return res.status(400).json({ message: "don't have user" })
+                        return res.json(user)
+                    } else {
+                        return res.sendStatus(authorize)
+                    }
+                }
+            } catch (err: any) {
+                res.send(err)
+            }
+        })
+    }
+
+    getUserAllIsRole = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
+        router.get(url, middleware, async (req: Request, res: Response) => {
+            try {
+                const authorize = await authorization(req, roles)
+                const role = req.params.role
+                if (authorize) {
+                    if (authorize !== 401) {
+                        const q = query(usersCollectionRef, where("role", "==", role))
+                        const user = await Helpers.getContain(q)
                         if (!user) return res.status(400).json({ message: "don't have user" })
                         return res.json(user)
                     } else {
@@ -269,8 +312,8 @@ export class ApiUser {
                     password: hashedPassword,
                     fullname: data.fullname,
                     credit: data.credit,
-                    role: "ADMIN",
-                    status: "REGULAR",
+                    role: TUserRoleEnum.ADMIN,
+                    status: TUserStatusEnum.REGULAR,
                     created_at: GMT(),
                     updated_at: GMT(),
                     tokenVersion: 1
@@ -382,8 +425,8 @@ export class ApiUser {
                             password: hashedPassword,
                             fullname: data.fullname,
                             credit: data.credit,
-                            role: "MANAGER",
-                            status: "REGULAR",
+                            role: TUserRoleEnum.MANAGER,
+                            status: TUserStatusEnum.REGULAR,
                             created_at: GMT(),
                             updated_at: GMT(),
                             tokenVersion: 1,
@@ -440,30 +483,45 @@ export class ApiUser {
                         if (!isStore) return res.sendStatus(403)
 
                         let user: IUser | {} = {}
-                        if (authorize.role === "ADMIN" || authorize.role === "AGENT") {
+                        if (authorize.role === TUserRoleEnum.ADMIN) {
                             user = {
                                 store_id: data.store_id,
                                 username: data.username,
                                 password: hashedPassword,
                                 fullname: data.fullname,
-                                credit: data.credit,
-                                role: "MEMBER",
-                                status: "REGULAR",
+                                credit: 0,
+                                role: TUserRoleEnum.MEMBER,
+                                status: TUserStatusEnum.REGULAR,
+                                created_at: GMT(),
+                                updated_at: GMT(),
+                                tokenVersion: 1,
+                                admin_create_id: authorize.id,
+                                agent_create_id: data.agent_create_id
+                            }
+                        } else if (authorize.role === TUserRoleEnum.AGENT) {
+                            user = {
+                                store_id: data.store_id,
+                                username: data.username,
+                                password: hashedPassword,
+                                fullname: data.fullname,
+                                credit: 0,
+                                role: TUserRoleEnum.MEMBER,
+                                status: TUserStatusEnum.REGULAR,
                                 created_at: GMT(),
                                 updated_at: GMT(),
                                 tokenVersion: 1,
                                 admin_create_id: authorize.admin_create_id,
-                                agent_create_id: authorize.agent_create_id
+                                agent_create_id: authorize.id
                             }
-                        } else if (authorize.role === "MANAGER") {
+                        } else if (authorize.role === TUserRoleEnum.MANAGER) {
                             user = {
                                 store_id: data.store_id,
                                 username: data.username,
                                 password: hashedPassword,
                                 fullname: data.fullname,
-                                credit: data.credit,
-                                role: "MEMBER",
-                                status: "REGULAR",
+                                credit: 0,
+                                role: TUserRoleEnum.MEMBER,
+                                status: TUserStatusEnum.REGULAR,
                                 created_at: GMT(),
                                 updated_at: GMT(),
                                 tokenVersion: 1,
@@ -472,7 +530,6 @@ export class ApiUser {
                                 manager_create_id: authorize.id
                             }
                         }
-
 
                         await Helpers.create(usersCollectionRef, user as IUser)
                             .then(async () => {

@@ -1,4 +1,4 @@
-@auth=Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJVSUQiOiI2aGlpYVRXRUxuU09rMFhiWGI0MyIsInRva2VuVmVyc2lvbiI6MSwicm9sZSI6IkFETUlOIiwiaWF0IjoxNjc0NjM4NjEyLCJleHAiOjE2NzQ2NjAyMTJ9.aavGl6Rc3uV190TyXCK5TO_dPo5HYpxAb6Osx-eNyi10QhmpscmnWdF0PU0qnM-3H69x9LUkzXzotZt2IRVNXByNHkbPfAPud62ZvjV1dLeuecuzF1O808Khu60HrsX6iiSKp61T6QytJQ7Z3G2XGOcc2UkspsPuy5Ht4ulUKmm9FEoKJCVMS1-AZmT3v2CzpdjSrg_g1R55RCaG2aqOT_87Q3FKlP1vLhBYVYrdeZH7Ko0lrzXw4oU7_SFcYGFZZuUTNxys43Qeyf_xD___dSAfx2rrJ6GD7tILhKGb7loJmgMOzaDXYbZM-z2M8h3JclzgBsZ2YDRjCzYLzaz7Nw
+@auth=jwt=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJVSUQiOiI2aGlpYVRXRUxuU09rMFhiWGI0MyIsInRva2VuVmVyc2lvbiI6NjExLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE2NzgxNzcyMjcsImV4cCI6MTY3ODE5ODgyN30.ktqIDMYxTwF0BuOi_lhRcpGHGx-e8s3djm4krDS5eJZIIAYw5wWuK3nuVOe4iHwNe3qOo7QU9gappniR7Ta_3H1m5WulTKsgWS8nkz9EAQmBkZLlGzxqYHAW2obgMmFZS90mRanYhoJOpuTQCg3ENjYgHgUNa0sM-qtbWJ717868v0dzFkYWPPM5kvZOSfoLMqqKC1Wbu9G6iqyv4Hl3aHEsVcN7_fEgpdlubIq1dyA7bA0-4n7T1JTVVQqYcR_KsAFOXvNEtFVkJ1Zrc7irybge631B_uAuCGHHg732tqUvBURlRJMiHZQ8F7Wu7YIL_TIgyr3c0nyYHBOqmryA4Q;
 
 
 ###
@@ -68,6 +68,24 @@ content-type: application/json
     "password": "123456789",
     "fullname": "agent",
     "credit": 0
+}
+
+###
+POST http://localhost:8000/add/member
+Cookie: {{auth}}
+content-type: application/json
+
+{
+    "username": "member1111",
+    "password": "123456789",
+    "fullname": "member11111111111",
+    "credit": 0,
+    "store_id": "3RDYTBqOjervu82IKQXm",
+    "agent_create_id": "pSJ2jiwWPMj7ksCQG5wV",
+    "admin_create_id": "6hiiaTWELnSOk0XbXb43",
+    "manager_create_id": "9pxJRIMKeNIRhqJlMDcZ",
+    "role": "MEMBER",
+    "status": "REGULAR"
 }
 
 ###

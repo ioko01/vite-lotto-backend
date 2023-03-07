@@ -1,4 +1,4 @@
-@auth=jwt=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJVSUQiOiJwU0oyaml3V1BNajdrc0NRRzV3ViIsInRva2VuVmVyc2lvbiI6OSwicm9sZSI6IkFHRU5UIiwiaWF0IjoxNjc2NjE3OTU0LCJleHAiOjE2NzY2Mzk1NTR9.Xrw04T_5G6jNo6_hyyv88TbkaoUBxpK3rzuO7-MJDEfJZLwXuMIMxNqHeV-PxTfwSA6sSXXURE-ZZTRqYkQQvBYHwuUBs6RWNxh0cDZpWFUNe-ZNJFTCUZl_l2DE-ZTpm3O8Sm2YBKqj1ey90Ysko7I4Kc1xGwpmkaPWR3EMqOxz2hbCby2C-pdaayLrGYg6Ksv6ZIWpQ9zJPLmBRM8vY9JQKqDTLBbjLkohQqtwlRGVztP2oMW-M6_SErsMAw7LYokHu5jGpZWioSxU3Gl0qh9MWUUpKmsGI7Wmt_JNAEflcNhH4TjxdSsTT2urW8PU4rjcLzbpeU-bMwMdGeWYXQ;
+@auth=jwt=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJVSUQiOiJwU0oyaml3V1BNajdrc0NRRzV3ViIsInRva2VuVmVyc2lvbiI6OSwicm9sZSI6IkFHRU5UIiwiaWF0IjoxNjc4MTc4NzUzLCJleHAiOjE2NzgyMDAzNTN9.IknXXYpI0yohswVN9nVWdX9dX1nhMNN9CRXIVt-W1So3dGK2VeCcOlQ3nwM-6eN96CEqxd1jq5WHtnhuPmZRqyhyCFO6xyNTEJ99VwhJZJMYf_2iYjkeiQoVPHrS8cVRtLEd1waFiw-kmXTXf1M8WjmNdrM67c1GxwXG74VGtXRbXfvsSB7M7OZAHpNz-vu9tppXrJIG-3YkpIDPwE5eR1nKFn41LwDvwlgKDDuN_9KmJ4lstwByN9GegCWKaeuu4G2fbRV_H3kmw_7S7BK2dcNG7gUepLxzvlIDumq5Toq3sz5Dlt0GCJavJjdLsc5NJ_sJ_afItne2OUtph2UVLg;
 
 ###
 POST http://localhost:8000/auth/login
@@ -142,7 +142,7 @@ Cookie: {{auth}}
 content-type: application/json
 
 {
-    "store_id": "U5D7nSeVqplRp8DQi1EG",
+    "store_id": "3RDYTBqOjervu82IKQXm",
     "username": "test01",
     "password": "123456789",
     "fullname": "test01",

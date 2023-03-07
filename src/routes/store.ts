@@ -21,7 +21,6 @@ export class ApiStore {
                 if (authorize) {
                     if (authorize !== 401) {
                         const { id } = req.params as { id: string }
-                        console.log(id, authorize.id);
                         const q = query(storesCollectionRef, where("user_create_id", "==", authorize.id), where(documentId(), "==", id))
 
                         const store = await Helpers.getContain(q)
@@ -118,6 +117,7 @@ export class ApiStore {
                         const q = query(storesCollectionRef, where("name", "==", data.name))
                         const isStore = await Helpers.getContain(q)
                         if (isStore.length > 0) return res.status(400).json({ message: "this store has been used" })
+                        if (data.admin_create_id) authorize.id = data.admin_create_id
 
                         const store: IStore = {
                             img_logo: data.img_logo,
