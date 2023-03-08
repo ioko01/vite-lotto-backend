@@ -148,9 +148,9 @@ export class ApiBill {
                     if (authorize !== 401) {
                         const data = req.body as IBill
                         if (!data.lotto_id && !data.rate_id && !data.times) return res.sendStatus(403)
-                        const rate = await Helpers.getId(doc(db, DBRates, data.rate_id)) as IRateDoc
-                        const lotto = await Helpers.getId(doc(db, DBLottos, data.lotto_id)) as ILottoDoc
-                        const store = await Helpers.getId(doc(db, DBStores, data.store_id)) as IStoreDoc
+                        const rate = await Helpers.getId(doc(db, DBRates, data.rate_id.id)) as IRateDoc
+                        const lotto = await Helpers.getId(doc(db, DBLottos, data.lotto_id.id)) as ILottoDoc
+                        const store = await Helpers.getId(doc(db, DBStores, data.store_id.id)) as IStoreDoc
 
                         if (!rate) return res.status(400).json({ message: "don't have rate" })
                         if (!lotto) return res.status(400).json({ message: "don't have lotto" })
@@ -170,7 +170,7 @@ export class ApiBill {
                             reward: data.reward,
                             created_at: GMT(),
                             updated_at: GMT(),
-                            user_create_id: authorize.id
+                            user_create_id: authorize
                         }
 
                         const price = this.calculatePrice(data.one_digits!, data.two_digits!, data.three_digits!)

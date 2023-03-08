@@ -38,7 +38,7 @@ export class UserController {
             const { credit, fullname, password, role, status, username } = user
 
             const hashedPassword = await bcrypt.hash(
-                password,
+                password!,
                 10
             );
 

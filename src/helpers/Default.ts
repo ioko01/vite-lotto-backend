@@ -99,7 +99,7 @@ export class HelperController {
             const { credit, fullname, password, role, status, username } = data
 
             const hashedPassword = await hash(
-                password,
+                password!,
                 10
             );
 

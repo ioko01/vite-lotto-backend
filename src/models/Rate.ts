@@ -1,10 +1,13 @@
+import { ILottoDoc, IStoreDoc } from "../helpers/Default";
 import { ICommittion } from "./Committion";
 import { IDigitPosition } from "./DigitPosition";
+import { ILotto } from "./Lotto";
 import { IInitialState } from "./Main";
+import { IStore } from "./Store";
 
 export interface IRate extends IInitialState {
-    store_id: string //ไอดีร้าน
-    lotto_id: string //ไอดีหวย
+    store_id: IStoreDoc //ไอดีร้าน
+    lotto_id: ILottoDoc //ไอดีหวย
     one_digits: IDigitPosition //ราคาจ่ายเลขวิ่ง ราคาจ่ายบน/ราคาจ่ายล่าง ==> {top:3, bottom: 4}
     two_digits: IDigitPosition //ราคาจ่ายเลข 2 ตัว ราคาจ่ายบน/ราคาจ่ายล่าง ==> {top:95, bottom:95}
     three_digits: IDigitPosition //ราคาจ่ายเลข 3 ตัว  ราคาจ่ายบน/ราคาจ่ายโต๊ด ==> {top:800, toad:125}

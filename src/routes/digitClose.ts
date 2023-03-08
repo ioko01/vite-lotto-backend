@@ -111,7 +111,7 @@ export class ApiDigitClose {
                             one_digits: data.one_digits,
                             two_digits: data.two_digits,
                             three_digits: data.three_digits,
-                            user_create_id: authorize.id,
+                            user_create_id: authorize,
                             created_at: GMT(),
                             updated_at: GMT(),
                         }

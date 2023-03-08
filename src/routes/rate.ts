@@ -132,8 +132,8 @@ export class ApiRate {
                     if (authorize !== 401) {
                         if (authorize.role === "AGENT") {
                             const data = req.body as IRate
-                            const lotto = await Helpers.getId(doc(db, DBLottos, data.lotto_id))
-                            const store = await Helpers.getId(doc(db, DBStores, data.store_id))
+                            const lotto = await Helpers.getId(doc(db, DBLottos, data.lotto_id.id))
+                            const store = await Helpers.getId(doc(db, DBStores, data.store_id.id))
                             if (!lotto) return res.status(400).json({ message: "don't have lotto" })
                             if (!store) return res.status(400).json({ message: "don't have store" })
                             const q = query(ratesCollectionRef, where("store_id", "==", data.store_id), where("lotto_id", "==", data.lotto_id))
@@ -151,7 +151,7 @@ export class ApiRate {
                                 admin_create_id: authorize.admin_create_id,
                                 created_at: GMT(),
                                 updated_at: GMT(),
-                                user_create_id: authorize.id,
+                                user_create_id: authorize,
                                 committion: data.committion
                             }
                             await Helpers.add(ratesCollectionRef, rate)

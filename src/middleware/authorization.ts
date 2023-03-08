@@ -24,17 +24,13 @@ export async function authorization(req: Request, roles: TUserRole[]) {
                     role: user.role,
                     status: user.status,
                     username: user.username,
-                    admin_create_id: user.admin_create_id,
-                    agent_create_id: user.agent_create_id,
-                    manager_create_id: user.manager_create_id,
-                    created_at: user.created_at,
-                    updated_at: user.updated_at,
-                    store_id: user.store_id,
-                    user_create_id: user.user_create_id,
-                    tokenVersion: user.tokenVersion,
-                    password: user.password,
                 }
-                
+                if (user.admin_create_id) isUser.admin_create_id = user.admin_create_id
+                if (user.agent_create_id) isUser.agent_create_id = user.agent_create_id
+                if (user.manager_create_id) isUser.manager_create_id = user.manager_create_id
+                if (user.user_create_id) isUser.user_create_id = user.user_create_id
+                if (user.store_id) isUser.store_id = user.store_id
+
                 if (roles.includes(decodedToken.role)) return isUser
                 return 401
             }

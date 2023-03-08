@@ -297,7 +297,7 @@ export class ApiUser {
                 const isValidateUsername = validateUsername(data.username);
                 if (!isValidateUsername) throw new Error("username invalid");
 
-                const isValidatePassword = validatePassword(data.password);
+                const isValidatePassword = validatePassword(data.password!);
                 if (!isValidatePassword) throw new Error("password invalid");
 
                 const q2 = query(usersCollectionRef, where("username", "==", data.username))
@@ -305,7 +305,7 @@ export class ApiUser {
 
                 if (docs.length > 0) res.sendStatus(400).send({ message: "this username has been used" })
 
-                const hashedPassword = await bcrypt.hash(data.password, 10);
+                const hashedPassword = await bcrypt.hash(data.password!, 10);
 
                 const user: IUser = {
                     username: data.username,
@@ -348,7 +348,7 @@ export class ApiUser {
                         const isValidateUsername = validateUsername(data.username);
                         if (!isValidateUsername) throw new Error("username invalid");
 
-                        const isValidatePassword = validatePassword(data.password);
+                        const isValidatePassword = validatePassword(data.password!!);
                         if (!isValidatePassword) throw new Error("password invalid");
 
                         const q = query(usersCollectionRef, where("username", "==", data.username))
@@ -356,7 +356,7 @@ export class ApiUser {
 
                         if (docs.length > 0) res.sendStatus(400).send({ message: "this username has been used" })
 
-                        const hashedPassword = await bcrypt.hash(data.password, 10);
+                        const hashedPassword = await bcrypt.hash(data.password!!, 10);
 
                         const user: IUser = {
                             username: data.username,
@@ -368,7 +368,7 @@ export class ApiUser {
                             created_at: GMT(),
                             updated_at: GMT(),
                             tokenVersion: 1,
-                            admin_create_id: authorize.id
+                            admin_create_id: authorize
                         }
 
                         await Helpers.create(usersCollectionRef, user)
@@ -404,7 +404,7 @@ export class ApiUser {
                         const isValidateUsername = validateUsername(data.username);
                         if (!isValidateUsername) return res.sendStatus(400).send({ message: "username invalid" })
 
-                        const isValidatePassword = validatePassword(data.password);
+                        const isValidatePassword = validatePassword(data.password!);
                         if (!isValidatePassword) return res.sendStatus(400).send({ message: "password invalid" })
 
                         const q = query(usersCollectionRef, where("username", "==", data.username))
@@ -412,26 +412,32 @@ export class ApiUser {
 
                         if (docs.length > 0) return res.sendStatus(400).send({ message: "this username has been used" })
 
-                        const hashedPassword = await bcrypt.hash(data.password, 10);
+                        const hashedPassword = await bcrypt.hash(data.password!, 10);
 
                         if (!data.store_id) return res.status(400).json({ message: "please input store" })
-                        const isStore = await Helpers.getId(doc(db, DBStores, data.store_id)) as IStoreDoc
+                        const isStore = await Helpers.getId(doc(db, DBStores, data.store_id.id)) as IStoreDoc
 
                         if (!isStore) return res.status(400).json({ message: "don't have store" })
-
                         const user: IUser = {
                             store_id: data.store_id,
                             username: data.username,
                             password: hashedPassword,
                             fullname: data.fullname,
-                            credit: data.credit,
+                            credit: 0,
                             role: TUserRoleEnum.MANAGER,
                             status: TUserStatusEnum.REGULAR,
                             created_at: GMT(),
                             updated_at: GMT(),
-                            tokenVersion: 1,
-                            admin_create_id: authorize.admin_create_id,
-                            agent_create_id: authorize.id
+                            tokenVersion: 1
+                        }
+
+                        if (authorize.role === TUserRoleEnum.ADMIN) {
+                            user.admin_create_id = data.agent_create_id!.admin_create_id
+                            user.agent_create_id = data.agent_create_id
+                        }
+                        if (authorize.role === TUserRoleEnum.AGENT) {
+                            user.admin_create_id = authorize.admin_create_id
+                            user.agent_create_id = authorize
                         }
 
                         await Helpers.create(usersCollectionRef, user)
@@ -467,7 +473,7 @@ export class ApiUser {
                         const isValidateUsername = validateUsername(data.username);
                         if (!isValidateUsername) throw new Error("username invalid");
 
-                        const isValidatePassword = validatePassword(data.password);
+                        const isValidatePassword = validatePassword(data.password!);
                         if (!isValidatePassword) throw new Error("password invalid");
 
                         const q = query(usersCollectionRef, where("username", "==", data.username))
@@ -475,10 +481,10 @@ export class ApiUser {
 
                         if (docs.length > 0) res.sendStatus(400).send({ message: "this username has been used" })
 
-                        const hashedPassword = await bcrypt.hash(data.password, 10);
+                        const hashedPassword = await bcrypt.hash(data.password!, 10);
 
                         if (!data.store_id) return res.sendStatus(403)
-                        const isStore = await Helpers.getId(doc(db, DBStores, data.store_id)) as IStoreDoc
+                        const isStore = await Helpers.getId(doc(db, DBStores, data.store_id.id)) as IStoreDoc
 
                         if (!isStore) return res.sendStatus(403)
 
@@ -495,7 +501,7 @@ export class ApiUser {
                                 created_at: GMT(),
                                 updated_at: GMT(),
                                 tokenVersion: 1,
-                                admin_create_id: authorize.id,
+                                admin_create_id: authorize,
                                 agent_create_id: data.agent_create_id
                             }
                         } else if (authorize.role === TUserRoleEnum.AGENT) {
@@ -681,8 +687,8 @@ export class ApiUser {
                 if (!user) return res.status(400).send({ message: "no account" })
 
                 const isPasswordValid = await bcrypt.compare(
-                    data.password,
-                    user.password
+                    data.password!,
+                    user.password!
                 )
                 if (!isPasswordValid) return res.status(400).send({ message: "invalid password" })
                 if (!user.tokenVersion) return res.sendStatus(403)

@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { router } from "../api";
 import { TUserRole } from "../models/User";
 import { authorization } from "../middleware/authorization";
-import { HelperController, IStoreDoc } from "../helpers/Default";
+import { HelperController, IStoreDoc, IUserDoc } from "../helpers/Default";
 import { DBStores, storesCollectionRef } from '../utils/firebase';
 import { DocumentData, Query, documentId, query, where } from 'firebase/firestore';
 import { GMT } from '../utils/time';
@@ -110,21 +110,21 @@ export class ApiStore {
     addStore = (url: string, middleware: (req: Request, res: Response, next: NextFunction) => void, roles: TUserRole[]) => {
         router.post(url, middleware, async (req: Request, res: Response) => {
             try {
-                const authorize = await authorization(req, roles)
+                let authorize = await authorization(req, roles)
                 if (authorize) {
                     if (authorize !== 401) {
                         const data = req.body as IStoreDoc
                         const q = query(storesCollectionRef, where("name", "==", data.name))
                         const isStore = await Helpers.getContain(q)
                         if (isStore.length > 0) return res.status(400).json({ message: "this store has been used" })
-                        if (data.admin_create_id) authorize.id = data.admin_create_id
+                        if (data.agent_create_id) authorize = data.agent_create_id
 
                         const store: IStore = {
                             img_logo: data.img_logo,
                             name: data.name,
                             created_at: GMT(),
                             updated_at: GMT(),
-                            user_create_id: authorize.id
+                            user_create_id: authorize as IUserDoc
                         }
 
                         await Helpers.add(storesCollectionRef, store)

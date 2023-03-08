@@ -1,5 +1,5 @@
+import { IStoreDoc } from "../helpers/Default"
 import { IInitialState } from "./Main"
-import { IStore } from "./Store"
 
 export type TUserRole = "ADMIN" | "AGENT" | "MANAGER" | "MEMBER" | "MANAGE_REWARD"
 export type TUserStatus = "REGULAR" | "CLOSED" | "BANNED"
@@ -19,9 +19,9 @@ export enum TUserStatusEnum {
 }
 
 export interface IUser extends IInitialState {
-    store_id?: string
+    store_id?: IStoreDoc
     username: string
-    password: string
+    password?: string
     fullname: string
     role: TUserRole
     status: TUserStatus

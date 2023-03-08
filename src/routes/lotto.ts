@@ -112,7 +112,7 @@ export class ApiLotto {
                             status: data.status,
                             created_at: GMT(),
                             updated_at: GMT(),
-                            user_create_id: authorize.id
+                            user_create_id: authorize
                         }
 
                         await Helpers.add(lottosCollectionRef, lotto)

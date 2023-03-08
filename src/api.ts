@@ -19,6 +19,7 @@ import { Server, Socket } from "socket.io";
 import { ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData } from './utils/socket-io';
 import { digitCloseHandler } from './socket/digitCloseHandler';
 import { userHandler } from './socket/userHandler';
+import { storeHandler } from './socket/storeHandler';
 
 config()
 
@@ -53,6 +54,7 @@ io.on("connection", (socket: Socket<ClientToServerEvents, ServerToClientEvents, 
 
     digitCloseHandler(socket)
     userHandler(socket)
+    storeHandler(socket)
 
     socket.on("disconnect", () => {
         console.log("user is disconnected");
