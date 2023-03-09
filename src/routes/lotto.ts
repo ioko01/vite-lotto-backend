@@ -120,7 +120,6 @@ export class ApiLotto {
                         if (data.thai_open_date) lotto.thai_open_date = data.thai_open_date
 
 
-                        console.log(lotto);
                         await Helpers.add(lottosCollectionRef, lotto)
                             .then(() => {
                                 return res.send({ statusCode: res.statusCode, message: "OK" })
