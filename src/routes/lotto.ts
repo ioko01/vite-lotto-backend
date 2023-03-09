@@ -112,9 +112,15 @@ export class ApiLotto {
                             status: data.status,
                             created_at: GMT(),
                             updated_at: GMT(),
-                            user_create_id: authorize
+                            user_create_id: authorize,
+                            date_type: data.date_type,
+                            date: data.date
                         }
+                        if (data.date) lotto.date = data.date
+                        if (data.thai_open_date) lotto.thai_open_date = data.thai_open_date
 
+
+                        console.log(lotto);
                         await Helpers.add(lottosCollectionRef, lotto)
                             .then(() => {
                                 return res.send({ statusCode: res.statusCode, message: "OK" })
