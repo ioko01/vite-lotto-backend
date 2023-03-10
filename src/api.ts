@@ -20,6 +20,10 @@ import { ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketDa
 import { digitCloseHandler } from './socket/digitCloseHandler';
 import { userHandler } from './socket/userHandler';
 import { storeHandler } from './socket/storeHandler';
+import { authorization } from './middleware/authorization';
+import { TUserRole } from './models/User';
+import upload from 'express-fileupload'
+import { ApiFile } from './routes/file';
 
 config()
 
@@ -40,6 +44,7 @@ export const io = new Server<
 APP.use(cookieParser())
 APP.use(cors(corsOption))
 APP.use(bodyParser.json())
+APP.use(upload())
 
 const Bill = new ApiBill()
 const User = new ApiUser()
@@ -49,6 +54,7 @@ const Rate = new ApiRate()
 const DigitSemi = new ApiDigitSemi()
 const DigitClose = new ApiDigitClose()
 const CheckReward = new ApiCheckReward()
+const File = new ApiFile()
 
 io.on("connection", (socket: Socket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>) => {
 
@@ -140,6 +146,9 @@ User.deleteUserMember('/delete/member', authenticate, ["ADMIN", "AGENT", "MANAGE
 
 User.login('/auth/login')// login
 User.logout('/auth/logout', authenticate, ["ADMIN", "AGENT", "MANAGER", "MEMBER"])// logout
+
+File.uploadFile('/upload/file', authenticate, ["ADMIN", "AGENT", "MANAGER"])
+File.previewFile('/get/file/:file', authenticate, ["ADMIN", "AGENT", "MANAGER", "MEMBER"])
 
 // เหลือสร้าง ประกาศ (เช่น ประกาศว่าหวยนี้เลื่อนไปเปิดเวลาไหน)
 
